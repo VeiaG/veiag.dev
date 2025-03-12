@@ -1,0 +1,33 @@
+.excalidraw-block{
+    width:100%;
+    position: relative;
+}
+.excalidraw-svg{
+    position: relative;
+    width:100%;
+    svg{
+        width:100%;
+        height:auto;
+        max-height: 512px;
+    }
+}
+.excalidraw-edit{
+    display: flex;
+    gap:8px;
+    align-items: center;
+}
+.excalidraw-wrapper{
+    width:100%;
+    height:100vh;
+    padding:0;
+    background:rgba(0,0,0,0.5);
+}
+.excalidraw-close{
+    position: absolute;
+    top:0px;
+    right:24px;
+    z-index: 999;
+}
+.excalidraw .Modal{
+    position: fixed !important; // fix for excalidraw modals , showing at top of page , not in viewport
+}
