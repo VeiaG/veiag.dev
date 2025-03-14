@@ -68,20 +68,13 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-#Copy media folder from root to app
-# COPY --from=builder --chown=nextjs:nodejs /app/media ./media
 
-#make this folder as volume , to store the uploaded images
+
 VOLUME /app/media
-
-#Copy files folder from root to app
-# COPY --from=builder --chown=nextjs:nodejs /app/files ./files
-
-#make this folder as volume , to store the uploaded files
 VOLUME /app/files
 
-RUN chown -R nextjs:nodejs /app/media
-RUN chown -R nextjs:nodejs /app/files
+RUN mkdir -p /app/media /app/files && chown -R nextjs:nodejs /app/media /app/files
+
 
 USER nextjs
 
