@@ -68,12 +68,12 @@ RUN chown nextjs:nodejs .next
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+RUN mkdir -p /app/media /app/files && chown -R nextjs:nodejs /app/media /app/files
 
 
 VOLUME /app/media
 VOLUME /app/files
 
-RUN mkdir -p /app/media /app/files && chown -R nextjs:nodejs /app/media /app/files
 
 
 USER nextjs
