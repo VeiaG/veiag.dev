@@ -80,6 +80,9 @@ VOLUME /app/media
 #make this folder as volume , to store the uploaded files
 VOLUME /app/files
 
+RUN chown -R nextjs:nodejs /app/media
+RUN chown -R nextjs:nodejs /app/files
+
 USER nextjs
 
 EXPOSE 3000
