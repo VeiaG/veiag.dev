@@ -69,13 +69,13 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 #Copy media folder from root to app
-COPY --from=builder --chown=nextjs:nodejs /app/media ./media
+# COPY --from=builder --chown=nextjs:nodejs /app/media ./media
 
 #make this folder as volume , to store the uploaded images
 VOLUME /app/media
 
 #Copy files folder from root to app
-COPY --from=builder --chown=nextjs:nodejs /app/files ./files
+# COPY --from=builder --chown=nextjs:nodejs /app/files ./files
 
 #make this folder as volume , to store the uploaded files
 VOLUME /app/files
