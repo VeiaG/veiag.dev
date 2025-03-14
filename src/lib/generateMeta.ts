@@ -24,7 +24,7 @@ export const generateMeta = async (args: { doc: Partial<Project> | null }): Prom
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title ? doc?.meta?.title : 'VeiaG '
+  const title = doc?.meta?.title ? 'veiag.dev - ' + doc?.meta?.title : 'veiag.dev'
 
   return {
     description: doc?.meta?.description,

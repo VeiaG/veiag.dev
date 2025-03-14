@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { Code, Excalidraw } from '@/payload-types'
+import { Code, Excalidraw, Gallery } from '@/payload-types'
 import {
   DefaultNodeTypes,
   SerializedBlockNode,
@@ -14,8 +14,15 @@ import Image from 'next/image'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import CopyButton from './CopyButton'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel'
 
-type NodeTypes = DefaultNodeTypes | SerializedBlockNode<Code | Excalidraw>
+type NodeTypes = DefaultNodeTypes | SerializedBlockNode<Code | Excalidraw | Gallery>
 
 const languageKeyToPrismlanguageMap = {
   plaintext: 'text',
@@ -54,57 +61,6 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
   ...defaultConverters,
   upload: ({ node }) => {
     return <CustomUploadComponent node={node} />
-  },
-  heading: ({ node, nodesToJSX }) => {
-    const children = nodesToJSX({ nodes: node.children })
-    const Tag = node.tag
-    let className = ''
-    // Add tailwind classes based on the heading level
-    switch (node.tag) {
-      case 'h1':
-        className = 'text-4xl font-bold'
-        break
-      case 'h2':
-        className = 'text-3xl font-bold'
-        break
-      case 'h3':
-        className = 'text-2xl font-bold'
-        break
-      case 'h4':
-        className = 'text-xl font-bold'
-        break
-      case 'h5':
-        className = 'text-lg font-bold'
-        break
-      case 'h6':
-        className = 'text-base font-bold'
-        break
-    }
-    return <Tag className={className}>{children}</Tag>
-  },
-
-  list: ({ node, nodesToJSX }) => {
-    const children = nodesToJSX({ nodes: node.children })
-    const Tag = node.tag
-    let className = ''
-    if (node.listType === 'number') {
-      className = 'list-decimal list-inside'
-    }
-    if (node.listType === 'bullet') {
-      className = 'list-disc list-inside'
-    }
-    if (node.listType === 'check') {
-      className = 'list-disc list-inside'
-    }
-    return <Tag className={className}>{children}</Tag>
-  },
-  quote: ({ node, nodesToJSX }) => {
-    const children = nodesToJSX({ nodes: node.children })
-    return (
-      <blockquote className="border-l-4 border-muted-foreground pl-4 py-2 bg-secondary">
-        {children}
-      </blockquote>
-    )
   },
   blocks: {
     Code: ({ node }) => {
@@ -150,6 +106,36 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
         />
       )
     },
+    gallery: ({ node }) => {
+      return (
+        <Carousel className="my-8">
+          <CarouselContent>
+            {node.fields.images?.map((image, index) => {
+              if (typeof image === 'string' || !image.url) {
+                return null
+              }
+              return (
+                <CarouselItem key={index} className="lg:basis-1/2 ">
+                  <div className="relative p-1 aspect-video w-full">
+                    <Image
+                      src={image.url}
+                      alt={image.alt}
+                      fill
+                      placeholder="blur"
+                      className="object-cover rounded-xl"
+                      blurDataURL={image.blurDataUrl || ''}
+                      draggable={false}
+                    />
+                  </div>
+                </CarouselItem>
+              )
+            })}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      )
+    },
   },
 })
 
@@ -160,7 +146,7 @@ type Props = {
 } & React.HTMLAttributes<HTMLDivElement>
 
 export default function RichText(props: Props) {
-  const { className, enableProse = true, enableGutter = true, ...rest } = props
+  const { className, enableProse = true, enableGutter = false, ...rest } = props
   return (
     <ConvertRichText
       converters={jsxConverters}

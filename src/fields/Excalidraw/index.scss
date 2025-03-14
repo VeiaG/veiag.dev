@@ -31,3 +31,7 @@
 .excalidraw .Modal{
     position: fixed !important; // fix for excalidraw modals , showing at top of page , not in viewport
 }
+.remove-margins{
+    margin:0 !important;
+    margin-block:0 !important;
+}

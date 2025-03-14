@@ -3,12 +3,18 @@ import { Excalidraw, exportToSvg } from '@excalidraw/excalidraw'
 
 import '@excalidraw/excalidraw/index.css'
 import { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types'
+import { Button } from '@payloadcms/ui'
 import { useState } from 'react'
 type ExcalidrawWrapperProps = {
   onSave: (svg: string, elements: string) => void
   initialElements?: string
+  closeModal: () => void
 }
-const ExcalidrawWrapper: React.FC<ExcalidrawWrapperProps> = ({ onSave, initialElements }) => {
+const ExcalidrawWrapper: React.FC<ExcalidrawWrapperProps> = ({
+  onSave,
+  initialElements,
+  closeModal,
+}) => {
   const [excalidrawAPI, setExcalidrawAPI] = useState<ExcalidrawImperativeAPI>()
 
   const handleExportToSVG = async () => {
@@ -60,21 +66,26 @@ const ExcalidrawWrapper: React.FC<ExcalidrawWrapperProps> = ({ onSave, initialEl
         }}
         renderTopRightUI={() => {
           return (
-            <button
-              style={{
-                background: '#70b1ec',
-                border: 'none',
-                color: '#fff',
-                width: 'max-content',
-                fontWeight: 'bold',
-              }}
-              onClick={() => {
-                // window.alert('This is dummy top right UI')
-                handleExportToSVG()
-              }}
-            >
-              Зберегти
-            </button>
+            <>
+              <Button
+                buttonStyle="secondary"
+                onClick={() => {
+                  closeModal()
+                }}
+                className="remove-margins"
+              >
+                Вийти
+              </Button>
+              <Button
+                buttonStyle="primary"
+                onClick={() => {
+                  handleExportToSVG()
+                }}
+                className="remove-margins"
+              >
+                Зберегти
+              </Button>
+            </>
           )
         }}
       ></Excalidraw>

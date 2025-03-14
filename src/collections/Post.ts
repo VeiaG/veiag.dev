@@ -1,5 +1,6 @@
 import { slugField } from '@/fields/slug'
 import type { CollectionConfig } from 'payload'
+import { revalidateDeletePost, revalidatePost } from './hooks/revalidatePost'
 
 export const Post: CollectionConfig = {
   slug: 'posts',
@@ -85,8 +86,24 @@ export const Post: CollectionConfig = {
       type: 'richText',
       required: true,
     },
+    {
+      name: 'publishedAt',
+      label: {
+        en: 'Published At',
+        uk: 'Опубліковано',
+      },
+      type: 'date',
+      required: true,
+      admin: {
+        position: 'sidebar',
+      },
+    },
     ...slugField(),
   ],
+  hooks: {
+    afterChange: [revalidatePost],
+    afterDelete: [revalidateDeletePost],
+  },
   versions: {
     maxPerDoc: 5,
     drafts: true,

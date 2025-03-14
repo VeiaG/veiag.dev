@@ -19,6 +19,10 @@ import { CodeBlock } from './blocks/CodeBlock'
 import { ExcalidrawBlock } from './blocks/Excalidraw'
 import { PostCategories } from './collections/PostCategories'
 import { Post } from './collections/Post'
+import { Gallery } from './blocks/Gallery'
+import { Homepage } from './collections/Globals/HomePage'
+import { Blog } from './collections/Globals/Blog'
+import { Files } from './collections/Files'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,18 +34,19 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  blocks: [CodeBlock, ExcalidrawBlock],
+  blocks: [CodeBlock, ExcalidrawBlock, Gallery],
   i18n: {
     fallbackLanguage: 'en',
     supportedLanguages: { en, uk },
   },
-  collections: [Users, Media, ProjectTags, Projects, PostCategories, Post],
+  collections: [Users, Media, ProjectTags, Projects, PostCategories, Post, Files],
+  globals: [Homepage, Blog],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,
       FixedToolbarFeature(),
       BlocksFeature({
-        blocks: ['Code', 'excalidraw'],
+        blocks: ['Code', 'excalidraw', 'gallery'],
         inlineBlocks: [],
       }),
     ],
@@ -57,9 +62,9 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     seoPlugin({
-      collections: ['projects'],
+      collections: ['projects', 'posts'],
       uploadsCollection: 'media',
-      generateTitle: ({ doc }) => `VeiaG — ${doc.title}`,
+      generateTitle: ({ doc }) => `${doc.title}`,
       generateDescription: ({ doc }) => doc.description || doc.shortDescription,
       generateImage: ({ doc }) => doc.image,
     }),

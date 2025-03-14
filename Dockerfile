@@ -25,6 +25,14 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ARG DATABASE_URI
+ARG PAYLOAD_SECRET
+
+ENV DATABASE_URI=$DATABASE_URI
+ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
+#Needed for sitemap generation
+ENV NEXT_PUBLIC_SERVER_URL=https://veiag.dev 
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.
@@ -59,6 +67,18 @@ RUN chown nextjs:nodejs .next
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+#Copy media folder from root to app
+COPY --from=builder --chown=nextjs:nodejs /app/media ./media
+
+#make this folder as volume , to store the uploaded images
+VOLUME /app/media
+
+#Copy files folder from root to app
+COPY --from=builder --chown=nextjs:nodejs /app/files ./files
+
+#make this folder as volume , to store the uploaded files
+VOLUME /app/files
 
 USER nextjs
 

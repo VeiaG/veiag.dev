@@ -2,10 +2,13 @@
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
-
+@plugin "@tailwindcss/typography";
 @custom-variant dark (&:is(.dark *));
 @theme {
   --font-sans: 'Inter', sans-serif;
+}
+@utility container {
+  padding-inline: 12px;
 }
 
 :root {
@@ -128,6 +131,7 @@
 }
 
 
+
 ::-webkit-scrollbar {
   width: 5px
 }
@@ -147,4 +151,7 @@
 }
 .light-scroll {
   scrollbar-color: var(--muted-foreground) transparent;
+}
+body{
+  min-height: 100vh;
 }

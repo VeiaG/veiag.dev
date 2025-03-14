@@ -10,7 +10,25 @@ import RichText from '@/components/RichText'
 import NoiseOverlay from '@/components/NoiseOverlay'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: config })
+  const posts = await payload.find({
+    collection: 'projects',
+    draft: false,
+    limit: 1000,
+    overrideAccess: false,
+    pagination: false,
+    select: {
+      slug: true,
+    },
+  })
 
+  const params = posts.docs.map(({ slug }) => {
+    return { slug }
+  })
+
+  return params
+}
 type Args = {
   params: Promise<{
     slug?: string
@@ -35,18 +53,18 @@ const ProjectPage = async ({ params }: Args) => {
           }
         />
         <NoiseOverlay className="z-10 opacity-70 mix-blend-multiply" />
-        <div className="grid gap-4 grid-cols-3 py-32 container mx-auto z-10 relative min-h-[inherit] max-w-[1280px] ">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-3 py-32 container mx-auto z-10 relative min-h-[inherit] max-w-[1280px] ">
           <Link
             href="/projects"
-            className="left-0 top-8 absolute flex gap-1 items-center z-10 hover:text-red-500 transition-colors "
+            className="left-3 md:left-0 top-8 absolute flex gap-1 items-center z-10 hover:text-red-500 transition-colors "
           >
             <ArrowLeft />
             <span>Back</span>
           </Link>
-          <div className="flex flex-col gap-2 justify-center col-span-2">
-            <h1 className="text-7xl font-bold">{project.title}</h1>
+          <div className="flex flex-col gap-2 justify-center col-span-1 md:col-span-2">
+            <h1 className="text-4xl md:text-7xl font-bold">{project.title}</h1>
 
-            <RichText data={project.fullDescription} className="text-xl" />
+            <RichText data={project.fullDescription} className="text-xl w-full text-zinc-50" />
             <div className="flex gap-2 w-full flex-wrap">
               {project.tags?.map((tag, index) => (
                 <span
@@ -58,23 +76,11 @@ const ProjectPage = async ({ params }: Args) => {
               ))}
             </div>
           </div>
-          {/* <div className="relative w-full h-full">
-            <Image
-              src={(typeof project.image === 'string' ? project.image : project.image.url) || ''}
-              alt={project.title}
-              fill
-              className="object-cover rounded-lg w-full h-full"
-               placeholder="blur"
-          blurDataURL={
-            typeof project.image === 'string' ? undefined : (project.image.blurDataUrl ?? undefined)
-          }
-            />
-          </div> */}
         </div>
       </div>
 
       <div className="py-6 mt-8 container mx-auto max-w-[1280px] text-lg">
-        <RichText data={project.content} className="space-y-2" />
+        <RichText data={project.content} />
       </div>
     </div>
   )
