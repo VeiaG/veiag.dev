@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
 import NavigationAdmin from './NavigationAdmin'
+import MobileNav from './MobileNav'
 
 const Navigation = () => {
   return (
@@ -28,6 +29,7 @@ const Navigation = () => {
           </Button>
           <NavigationAdmin />
         </div>
+        <MobileNav />
       </div>
     </nav>
   )

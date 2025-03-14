@@ -16,7 +16,7 @@ const SharePost = () => {
   const path = usePathname()
   const url = `${base}${path}`
   return (
-    <div className="mt-8 py-4 border-t flex gap-2 justify-between">
+    <div className="mt-8 py-4 border-t flex gap-2 justify-between items-center">
       <span>Share this article</span>
       <div className="flex gap-2 items-center">
         <Button asChild variant="outline" size="icon" className="rounded-full">

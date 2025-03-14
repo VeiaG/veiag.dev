@@ -5,8 +5,11 @@ import { Github, Linkedin, Mail } from 'lucide-react'
 const Footer = () => {
   return (
     <footer className="border-t py-4 mt-12">
-      <div className="container mx-auto flex gap-2 justify-between">
-        <div>© {new Date().getFullYear()} veiag.dev. All rights reserved.</div>
+      <div className="container mx-auto flex gap-2 justify-between items-center">
+        <div>
+          © {new Date().getFullYear()} veiag.dev
+          <span className="hidden md:inline">. All rights reserved.</span>
+        </div>
         <div className="flex gap-2 items-center">
           <Button variant="ghost" size="icon" asChild>
             <Link href="https://www.linkedin.com/in/veiag/" target="_blank">

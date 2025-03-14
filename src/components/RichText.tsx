@@ -21,6 +21,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
+import ImageModal from './ImageModal'
 
 type NodeTypes = DefaultNodeTypes | SerializedBlockNode<Code | Excalidraw | Gallery>
 
@@ -108,7 +109,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     },
     gallery: ({ node }) => {
       return (
-        <Carousel className="my-8">
+        <Carousel className="my-8 mx-12 lg:mx-0">
           <CarouselContent>
             {node.fields.images?.map((image, index) => {
               if (typeof image === 'string' || !image.url) {
@@ -116,17 +117,35 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
               }
               return (
                 <CarouselItem key={index} className="lg:basis-1/2 ">
-                  <div className="relative p-1 aspect-video w-full">
-                    <Image
-                      src={image.url}
-                      alt={image.alt}
-                      fill
-                      placeholder="blur"
-                      className="object-cover rounded-xl"
-                      blurDataURL={image.blurDataUrl || ''}
-                      draggable={false}
-                    />
-                  </div>
+                  <ImageModal
+                    fullScreenContent={
+                      <Image
+                        src={image.url || ''}
+                        alt={image.alt}
+                        sizes="100vw"
+                        width={0}
+                        height={0}
+                        style={{ width: '100%', height: '100%' }}
+                        className="object-contain max-h-[90vh] max-w-[90vw] not-prose"
+                        placeholder="blur"
+                        blurDataURL={image.blurDataUrl || ''}
+                      />
+                    }
+                  >
+                    <div className="relative p-1 h-auto  w-full aspect-video">
+                      <Image
+                        src={image.url}
+                        alt={image.alt}
+                        width={image.width || 0}
+                        height={image.height || 0}
+                        style={{ width: 'auto', height: '100%' }}
+                        placeholder="blur"
+                        className="object-cover rounded-xl not-prose  aspect-video"
+                        blurDataURL={image.blurDataUrl || ''}
+                        draggable={false}
+                      />
+                    </div>
+                  </ImageModal>
                 </CarouselItem>
               )
             })}
@@ -155,7 +174,7 @@ export default function RichText(props: Props) {
         {
           container: enableGutter,
           'max-w-none': !enableGutter,
-          'mx-auto prose md:prose-md dark:prose-invert': enableProse,
+          'mx-auto prose prose-zinc md:prose-md dark:prose-invert': enableProse,
         },
         className,
       )}

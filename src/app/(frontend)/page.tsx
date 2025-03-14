@@ -84,7 +84,7 @@ export default async function HomePage() {
         className="py-12 flex flex-col gap-2"
         initial={{ opacity: 0, y: -16 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.7 }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.3 }}
       >
         <h1 className="text-5xl font-bold text-center">Featured Projects</h1>
@@ -114,7 +114,7 @@ export default async function HomePage() {
       <MotionSection
         initial={{ opacity: 0, y: -16 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.7 }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.3 }}
         className="py-12 grid gap-8 grid-cols-1 md:grid-cols-2 relative items-start"
         id="about"
@@ -145,7 +145,7 @@ export default async function HomePage() {
         className="py-12 flex flex-col gap-2"
         initial={{ opacity: 0, y: -16 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.7 }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.3 }}
       >
         <h1 className="text-5xl font-bold text-center">Blog Posts</h1>
