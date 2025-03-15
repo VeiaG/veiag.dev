@@ -6,6 +6,9 @@
 @custom-variant dark (&:is(.dark *));
 @theme {
   --font-sans: 'Inter', sans-serif;
+  /* --color-zinc-950: red;
+  --color-zinc-950 : oklch(0.141 0.005 285.823); */
+
 }
 @utility container {
   padding-inline: 12px;
@@ -154,4 +157,15 @@
 }
 body{
   min-height: 100vh;
+}
+
+.exclaidraw-default svg{
+  width:100%;
+  height:auto;
+  max-height:360px;
+}
+.exclaidraw-square svg{
+  width:100%;
+  height:auto;
+  aspect-ratio: 1;
 }

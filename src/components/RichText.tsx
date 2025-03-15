@@ -91,7 +91,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       let className = ''
       switch (node.fields.height) {
         case 'default':
-          className = '*:max-h-[360px]'
+          className = '*:max-h-[360px]' //This also provided in styles for compatability ( ios sucks )
           break
         case 'square':
           className = '*:aspect-square'
@@ -103,7 +103,11 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
       return (
         <div
           dangerouslySetInnerHTML={{ __html: node.fields.svg || '' }}
-          className={cn('w-full h-auto *:w-full *:h-auto  mt-4 mb-8', className)}
+          className={cn(
+            'w-full h-auto *:w-full *:h-auto  mt-4 mb-8',
+            className,
+            `exclaidraw-${node.fields.height}`,
+          )}
         />
       )
     },
