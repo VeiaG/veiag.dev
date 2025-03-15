@@ -25,25 +25,20 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ARG DATABASE_URI
-ARG PAYLOAD_SECRET
-
-ENV DATABASE_URI=$DATABASE_URI
-ENV PAYLOAD_SECRET=$PAYLOAD_SECRET
-#Needed for sitemap generation
-ENV NEXT_PUBLIC_SERVER_URL=https://veiag.dev 
-
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-# ENV NEXT_TELEMETRY_DISABLED 1
-
-RUN \
-  if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Using secrets for build-time credentials
+RUN --mount=type=secret,id=DATABASE_URI \
+    --mount=type=secret,id=PAYLOAD_SECRET \
+    export DATABASE_URI=$(cat /run/secrets/DATABASE_URI) && \
+    export PAYLOAD_SECRET=$(cat /run/secrets/PAYLOAD_SECRET) && \
+    # Set environment variables for the build process
+    # Needed for sitemap generation
+    export NEXT_PUBLIC_SERVER_URL=https://veiag.dev && \
+    \
+    if [ -f yarn.lock ]; then yarn run build; \
+    elif [ -f package-lock.json ]; then npm run build; \
+    elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+    else echo "Lockfile not found." && exit 1; \
+    fi
 
 # Production image, copy all the files and run next
 FROM base AS runner
@@ -76,7 +71,10 @@ RUN chown -R nextjs:nodejs /app/media /app/files
 VOLUME /app/media
 VOLUME /app/files
 
-
+# These environment variables will need to be provided at runtime
+ENV DATABASE_URI=""
+ENV PAYLOAD_SECRET=""
+ENV NEXT_PUBLIC_SERVER_URL=https://veiag.dev
 
 USER nextjs
 
