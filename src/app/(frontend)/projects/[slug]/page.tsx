@@ -57,7 +57,7 @@ const ProjectPage = async ({ params }: Args) => {
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3 py-32 container mx-auto z-10 relative min-h-[inherit] max-w-[1280px] ">
           <Link
             href="/projects"
-            className="left-3 md:left-0 top-8 absolute flex gap-1 items-center z-10 hover:text-red-500 transition-colors "
+            className="left-3 md:left-0 top-8 absolute flex gap-1 items-center z-10 hover:text-yellow-500 transition-colors "
           >
             <ArrowLeft />
             <span>Back</span>
