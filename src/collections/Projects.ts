@@ -96,6 +96,39 @@ export const Projects: CollectionConfig = {
       required: true,
     },
     ...slugField(),
+    {
+      name: 'githubLink',
+      label: {
+        en: 'Github Link',
+        uk: 'Посилання на Github',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'figmaLink',
+      label: {
+        en: 'Figma Link',
+        uk: 'Посилання на Figma',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'projectLink',
+      label: {
+        en: 'Project Link',
+        uk: 'Посилання на проект',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+      },
+    },
   ],
   hooks: {
     afterChange: [revalidateProject],

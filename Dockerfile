@@ -72,8 +72,8 @@ VOLUME /app/media
 VOLUME /app/files
 
 # These environment variables will need to be provided at runtime
-ENV DATABASE_URI=""
-ENV PAYLOAD_SECRET=""
+# ENV DATABASE_URI=""
+# ENV PAYLOAD_SECRET=""
 ENV NEXT_PUBLIC_SERVER_URL=https://veiag.dev
 
 USER nextjs

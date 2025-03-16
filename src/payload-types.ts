@@ -262,6 +262,9 @@ export interface Project {
   };
   slug?: string | null;
   slugLock?: boolean | null;
+  githubLink?: string | null;
+  figmaLink?: string | null;
+  projectLink?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -475,6 +478,9 @@ export interface ProjectsSelect<T extends boolean = true> {
   content?: T;
   slug?: T;
   slugLock?: T;
+  githubLink?: T;
+  figmaLink?: T;
+  projectLink?: T;
   meta?:
     | T
     | {

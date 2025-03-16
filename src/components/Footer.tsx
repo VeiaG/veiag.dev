@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Button } from './ui/button'
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { Figma, Github, Linkedin, Mail } from 'lucide-react'
 
 const Footer = () => {
   return (
@@ -14,6 +14,11 @@ const Footer = () => {
           <Button variant="ghost" size="icon" asChild>
             <Link href="https://www.linkedin.com/in/veiag/" target="_blank">
               <Linkedin />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="https://www.figma.com/@veiag">
+              <Figma />
             </Link>
           </Button>
 

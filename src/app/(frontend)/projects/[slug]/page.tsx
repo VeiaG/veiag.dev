@@ -8,8 +8,9 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import RichText from '@/components/RichText'
 import NoiseOverlay from '@/components/NoiseOverlay'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Figma, Github } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 export async function generateStaticParams() {
   const payload = await getPayload({ config: config })
   const posts = await payload.find({
@@ -74,6 +75,30 @@ const ProjectPage = async ({ params }: Args) => {
                   {typeof tag === 'string' ? tag : tag.title}
                 </span>
               ))}
+            </div>
+            <div className="flex gap-2 w-full flex-wrap items-center mt-3">
+              {project.projectLink && (
+                <Button variant="default" asChild>
+                  <Link href={project.projectLink || 'https://veiag.dev'}>
+                    Website
+                    <ArrowUpRight />
+                  </Link>
+                </Button>
+              )}
+              {project.githubLink && (
+                <Button variant="ghostBlurry" asChild size={'icon'}>
+                  <Link href={project.githubLink || 'https://github.com/VeiaG'}>
+                    <Github />
+                  </Link>
+                </Button>
+              )}
+              {project.figmaLink && (
+                <Button variant="ghostBlurry" asChild size={'icon'}>
+                  <Link href={project.figmaLink || 'https://www.figma.com/@veiag'}>
+                    <Figma />
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         </div>
