@@ -9,7 +9,6 @@ export const ExcalidrawBlock: Block = {
       name: 'code',
       label: 'Code',
       admin: {
-        // readOnly: true,
         components: {
           Field: './fields/Excalidraw#EmptyElement',
         },

@@ -5,6 +5,9 @@ export const languages = {
   tsx: 'TSX',
   js: 'JavaScript',
   jsx: 'JSX',
+  css: 'CSS',
+  html: 'HTML',
+  json: 'JSON',
 }
 export const CodeBlock: Block = {
   slug: 'Code',

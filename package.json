@@ -16,7 +16,7 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
-    "@excalidraw/excalidraw": "^0.18.0-a9e2d23",
+    "@excalidraw/excalidraw": "^0.18.0",
     "@oversightstudio/blur-data-urls": "^1.0.4",
     "@payloadcms/db-mongodb": "latest",
     "@payloadcms/next": "latest",

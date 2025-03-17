@@ -31,6 +31,9 @@ const languageKeyToPrismlanguageMap = {
   tsx: 'tsx',
   js: 'javascript',
   jsx: 'jsx',
+  css: 'css',
+  html: 'html',
+  json: 'json',
 }
 
 const CustomUploadComponent: React.FC<{

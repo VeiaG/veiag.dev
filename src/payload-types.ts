@@ -137,7 +137,7 @@ export interface UserAuthOperations {
  * via the `definition` "Code".
  */
 export interface Code {
-  language?: ('ts' | 'plaintext' | 'tsx' | 'js' | 'jsx') | null;
+  language?: ('ts' | 'plaintext' | 'tsx' | 'js' | 'jsx' | 'css' | 'html' | 'json') | null;
   code?: string | null;
   id?: string | null;
   blockName?: string | null;
