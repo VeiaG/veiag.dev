@@ -6,6 +6,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { docsReorder } from '@veiag/payload-docs-reorder'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -77,6 +78,13 @@ export default buildConfig({
         width: 12,
         height: 'auto',
       },
+    }),
+    docsReorder({
+      collections: {
+        projects: true,
+        posts: true,
+      },
+      // initializeDocOrder: true,
     }),
     // storage-adapter-placeholder
   ],

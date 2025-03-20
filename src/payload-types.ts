@@ -273,6 +273,7 @@ export interface Project {
      */
     image?: (string | null) | Media;
   };
+  docOrder?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -323,6 +324,7 @@ export interface Post {
      */
     image?: (string | null) | Media;
   };
+  docOrder?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -488,6 +490,7 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  docOrder?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -521,6 +524,7 @@ export interface PostsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  docOrder?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

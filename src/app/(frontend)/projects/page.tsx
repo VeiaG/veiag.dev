@@ -37,7 +37,7 @@ const ProjectsPage = async ({ searchParams }: ProjectsPageProps) => {
     collection: 'projects',
     depth: 1,
     limit: 0,
-
+    sort: 'docOrder',
     overrideAccess: false,
     select: {
       title: true,
