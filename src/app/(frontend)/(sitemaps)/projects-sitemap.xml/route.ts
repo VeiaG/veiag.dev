@@ -33,11 +33,7 @@ const getProjectsSitemap = unstable_cache(
 
     const defaultSitemap = [
       {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/posts`,
+        loc: `${SITE_URL}/projects`,
         lastmod: dateFallback,
       },
     ]
@@ -47,7 +43,7 @@ const getProjectsSitemap = unstable_cache(
           .filter((project) => Boolean(project?.slug))
           .map((project) => {
             return {
-              loc: `${SITE_URL}/blog/${project?.slug}`,
+              loc: `${SITE_URL}/projects/${project?.slug}`,
               lastmod: project.updatedAt || dateFallback,
             }
           })
