@@ -33,15 +33,15 @@ const BlogCard = ({
       {!hideImage && (
         <div
           className={cn(
-            'relative min-h-[256px] h-auto w-full overflow-hidden rounded-xl rounded-b-none',
-            isOnHomepage ? 'grow' : 'h-[256px]',
+            'relative  h-auto w-full rounded-xl rounded-b-none aspect-video',
+            isOnHomepage ? 'grow' : '',
           )}
         >
           <Image
             src={(typeof image === 'string' ? image : image.url) || ''}
             alt={(image as Media)?.alt || title}
             fill
-            className="object-cover "
+            className="object-cover"
             placeholder="blur"
             blurDataURL={typeof image === 'string' ? undefined : (image.blurDataUrl ?? undefined)}
           />

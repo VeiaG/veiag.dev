@@ -68,7 +68,7 @@ const BlogPage = async ({ searchParams }: BlogPageProps) => {
         </div>
       </section>
       <section className="container mx-auto pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 py-6">
           {posts.docs.map((post, index) => (
             <BlogCard
               key={index}
