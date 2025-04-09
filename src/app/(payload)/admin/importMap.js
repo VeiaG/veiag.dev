@@ -1,9 +1,10 @@
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
+import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
-import { Code as Code_f181ff76a9585b163ba2fb93b009d526 } from 'src/fields/CodeBlock/'
-import { EmptyElement as EmptyElement_2e325446d0bd6ec1ee46d0a1976c71a7 } from 'src/fields/Excalidraw'
-import { default as default_2e325446d0bd6ec1ee46d0a1976c71a7 } from 'src/fields/Excalidraw'
+import { Code as Code_f181ff76a9585b163ba2fb93b009d526 } from '../../../fields/CodeBlock/'
+import { EmptyElement as EmptyElement_2e325446d0bd6ec1ee46d0a1976c71a7 } from '../../../fields/Excalidraw'
+import { default as default_2e325446d0bd6ec1ee46d0a1976c71a7 } from '../../../fields/Excalidraw'
 import { FixedToolbarFeatureClient as FixedToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { InlineToolbarFeatureClient as InlineToolbarFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
@@ -36,6 +37,7 @@ import { CollectionDocsOrderButton as CollectionDocsOrderButton_edd65be3c568ddc9
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
+  "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/fields/CodeBlock/#Code": Code_f181ff76a9585b163ba2fb93b009d526,
   "./fields/Excalidraw#EmptyElement": EmptyElement_2e325446d0bd6ec1ee46d0a1976c71a7,

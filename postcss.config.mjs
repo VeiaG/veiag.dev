@@ -75,8 +75,8 @@ const config = {
   plugins: {
     '@tailwindcss/postcss': {},
     // colorMixVarResolverPlugin,
-    '@csstools/postcss-oklab-function': { preserve: true },
-    '@csstools/postcss-color-mix-function': { preserve: true },
+    // '@csstools/postcss-oklab-function': { preserve: true },
+    // '@csstools/postcss-color-mix-function': { preserve: true },
 
     // autoprefixer: {},
   },

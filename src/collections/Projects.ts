@@ -17,6 +17,8 @@ export const Projects: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
   },
+  // Doesn't work for now https://github.com/payloadcms/payload/issues/12002
+  // orderable: true,
   access: {
     read: ({ req }) => {
       if (req.user) {
