@@ -4,12 +4,8 @@ import config from '@payload-config'
 import { Metadata } from 'next'
 import { generateMeta } from '@/lib/generateMeta'
 import { notFound } from 'next/navigation'
-//TODO : update lexical from canary to stable release , when they fix image issue
-import Image from 'next/image'
+
 import RichText from '@/components/RichText'
-import { ArrowLeft, Calendar } from 'lucide-react'
-import Link from 'next/link'
-import SharePost from '@/components/SharePost'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: config })
