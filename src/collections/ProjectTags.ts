@@ -17,6 +17,10 @@ export const ProjectTags: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: {
+      en: 'Projects',
+      uk: 'Проекти',
+    },
   },
   fields: [
     {

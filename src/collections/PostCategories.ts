@@ -17,6 +17,10 @@ export const PostCategories: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: {
+      en: 'Blog',
+      uk: 'Блог',
+    },
   },
   fields: [
     {

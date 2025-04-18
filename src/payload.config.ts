@@ -6,7 +6,7 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
-import { docsReorder } from '@veiag/payload-docs-reorder'
+// import { docsReorder } from '@veiag/payload-docs-reorder'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
@@ -24,6 +24,7 @@ import { Gallery } from './blocks/Gallery'
 import { Homepage } from './collections/Globals/HomePage'
 import { Blog } from './collections/Globals/Blog'
 import { Files } from './collections/Files'
+import { Page } from './collections/Pages'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -40,7 +41,7 @@ export default buildConfig({
     fallbackLanguage: 'en',
     supportedLanguages: { en, uk },
   },
-  collections: [Users, Media, ProjectTags, Projects, PostCategories, Post, Files],
+  collections: [Users, Media, ProjectTags, Projects, PostCategories, Post, Files, Page],
   globals: [Homepage, Blog],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
@@ -63,7 +64,7 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     seoPlugin({
-      collections: ['projects', 'posts'],
+      collections: ['projects', 'posts', 'pages'],
       uploadsCollection: 'media',
       generateTitle: ({ doc }) => `${doc.title}`,
       generateDescription: ({ doc }) => doc.description || doc.shortDescription,
@@ -79,13 +80,13 @@ export default buildConfig({
         height: 'auto',
       },
     }),
-    docsReorder({
-      collections: {
-        projects: true,
-        posts: true,
-      },
-      // initializeDocOrder: true,
-    }),
+    // docsReorder({
+    //   collections: {
+    //     projects: true,
+    //     posts: true,
+    //   },
+    //   // initializeDocOrder: true,
+    // }),
     // storage-adapter-placeholder
   ],
 })

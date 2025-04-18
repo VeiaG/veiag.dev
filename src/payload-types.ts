@@ -78,6 +78,7 @@ export interface Config {
     'post-categories': PostCategory;
     posts: Post;
     files: File;
+    pages: Page;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -91,6 +92,7 @@ export interface Config {
     'post-categories': PostCategoriesSelect<false> | PostCategoriesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     files: FilesSelect<false> | FilesSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -227,6 +229,7 @@ export interface ProjectTag {
  */
 export interface Project {
   id: string;
+  _order?: string;
   title: string;
   shortDescription: string;
   fullDescription: {
@@ -274,7 +277,6 @@ export interface Project {
      */
     image?: (string | null) | Media;
   };
-  docOrder?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -295,6 +297,7 @@ export interface PostCategory {
  */
 export interface Post {
   id: string;
+  _order?: string;
   title: string;
   shortDescription: string;
   image: string | Media;
@@ -325,7 +328,6 @@ export interface Post {
      */
     image?: (string | null) | Media;
   };
-  docOrder?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -347,6 +349,43 @@ export interface File {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  _order?: string;
+  title: string;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  slug?: string | null;
+  slugLock?: boolean | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -382,6 +421,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'files';
         value: string | File;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -473,6 +516,7 @@ export interface ProjectTagsSelect<T extends boolean = true> {
  * via the `definition` "projects_select".
  */
 export interface ProjectsSelect<T extends boolean = true> {
+  _order?: T;
   title?: T;
   shortDescription?: T;
   fullDescription?: T;
@@ -491,7 +535,6 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  docOrder?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -510,6 +553,7 @@ export interface PostCategoriesSelect<T extends boolean = true> {
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
+  _order?: T;
   title?: T;
   shortDescription?: T;
   image?: T;
@@ -525,7 +569,6 @@ export interface PostsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  docOrder?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -546,6 +589,27 @@ export interface FilesSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  _order?: T;
+  title?: T;
+  content?: T;
+  slug?: T;
+  slugLock?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

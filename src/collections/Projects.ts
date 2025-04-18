@@ -16,9 +16,13 @@ export const Projects: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: {
+      en: 'Projects',
+      uk: 'Проекти',
+    },
   },
-  // Doesn't work for now https://github.com/payloadcms/payload/issues/12002
-  // orderable: true,
+  orderable: true,
+  // defaultSort: '-order',
   access: {
     read: ({ req }) => {
       if (req.user) {

@@ -16,7 +16,12 @@ export const Post: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
+    group: {
+      en: 'Blog',
+      uk: 'Блог',
+    },
   },
+  orderable: true,
   access: {
     read: ({ req }) => {
       if (req.user) {

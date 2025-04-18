@@ -22,7 +22,7 @@ const BlogPage = async ({ searchParams }: BlogPageProps) => {
     collection: 'posts',
     depth: 1,
     limit: 8,
-    sort: 'docOrder',
+    sort: '_order',
     page: page,
     overrideAccess: false,
     select: {
