@@ -52,6 +52,7 @@ export const Post: CollectionConfig = {
       },
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'shortDescription',
@@ -61,6 +62,7 @@ export const Post: CollectionConfig = {
       },
       type: 'textarea',
       required: true,
+      localized: true,
     },
     {
       name: 'image',
@@ -90,6 +92,7 @@ export const Post: CollectionConfig = {
       },
       type: 'richText',
       required: true,
+      localized: true,
     },
     {
       name: 'publishedAt',

@@ -108,7 +108,7 @@ export interface Config {
     homepage: HomepageSelect<false> | HomepageSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'uk';
   user: User & {
     collection: 'users';
   };
@@ -211,6 +211,13 @@ export interface User {
   hash?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
   password?: string | null;
 }
 /**
@@ -229,7 +236,7 @@ export interface ProjectTag {
  */
 export interface Project {
   id: string;
-  _order?: string;
+  _order?: string | null;
   title: string;
   shortDescription: string;
   fullDescription: {
@@ -297,7 +304,7 @@ export interface PostCategory {
  */
 export interface Post {
   id: string;
-  _order?: string;
+  _order?: string | null;
   title: string;
   shortDescription: string;
   image: string | Media;
@@ -356,7 +363,7 @@ export interface File {
  */
 export interface Page {
   id: string;
-  _order?: string;
+  _order?: string | null;
   title: string;
   content: {
     root: {
@@ -482,6 +489,13 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

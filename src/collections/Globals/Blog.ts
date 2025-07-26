@@ -1,7 +1,6 @@
 import { GlobalConfig } from 'payload'
 import { revalidateBlog } from '../hooks/revalidateBlog'
 
-//TODO add after change hook, to revalidate homepage cache
 export const Blog: GlobalConfig = {
   slug: 'blog',
   admin: {
@@ -22,6 +21,7 @@ export const Blog: GlobalConfig = {
         en: 'Hero',
         uk: 'Головний блок',
       },
+      localized: true,
     },
   ],
   hooks: {

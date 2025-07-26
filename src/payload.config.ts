@@ -41,6 +41,10 @@ export default buildConfig({
     fallbackLanguage: 'en',
     supportedLanguages: { en, uk },
   },
+  localization: {
+    defaultLocale: 'en',
+    locales: ['en', 'uk'],
+  },
   collections: [Users, Media, ProjectTags, Projects, PostCategories, Post, Files, Page],
   globals: [Homepage, Blog],
   editor: lexicalEditor({
@@ -80,13 +84,5 @@ export default buildConfig({
         height: 'auto',
       },
     }),
-    // docsReorder({
-    //   collections: {
-    //     projects: true,
-    //     posts: true,
-    //   },
-    //   // initializeDocOrder: true,
-    // }),
-    // storage-adapter-placeholder
   ],
 })

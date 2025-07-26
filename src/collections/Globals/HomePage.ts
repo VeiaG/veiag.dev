@@ -35,6 +35,7 @@ export const Homepage: GlobalConfig = {
         en: 'About',
         uk: 'Про мене',
       },
+      localized: true,
     },
     {
       name: 'skills',
@@ -114,6 +115,7 @@ export const Homepage: GlobalConfig = {
             en: 'Description',
             uk: 'Опис',
           },
+          localized: true,
         },
         {
           name: 'location',
@@ -123,6 +125,7 @@ export const Homepage: GlobalConfig = {
             en: 'Location',
             uk: 'Місце розташування',
           },
+          localized: true,
         },
         {
           name: 'isPresent',

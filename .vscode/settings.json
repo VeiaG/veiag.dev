@@ -56,5 +56,9 @@
     "titleBar.inactiveBackground": "#215b4799",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#215b47"
+  "peacock.color": "#215b47",
+  "i18n-ally.localesPaths": [
+    "src/i18n",
+    "src/i18n/messages"
+  ]
 }

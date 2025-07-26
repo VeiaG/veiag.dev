@@ -53,6 +53,7 @@ export const Projects: CollectionConfig = {
       },
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'shortDescription',
@@ -62,6 +63,7 @@ export const Projects: CollectionConfig = {
       },
       type: 'textarea',
       required: true,
+      localized: true,
     },
     {
       name: 'fullDescription',
@@ -71,6 +73,7 @@ export const Projects: CollectionConfig = {
       },
       type: 'richText',
       required: true,
+      localized: true,
     },
     {
       name: 'image',
@@ -100,6 +103,7 @@ export const Projects: CollectionConfig = {
       },
       type: 'richText',
       required: true,
+      localized: true,
     },
     ...slugField(),
     {
