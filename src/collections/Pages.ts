@@ -48,6 +48,7 @@ export const Page: CollectionConfig = {
       },
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'content',
@@ -57,6 +58,7 @@ export const Page: CollectionConfig = {
       },
       type: 'richText',
       required: true,
+      localized: true,
     },
     ...slugField(),
   ],

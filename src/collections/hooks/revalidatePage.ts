@@ -6,11 +6,12 @@ import { Page } from '@/payload-types'
 export const revalidatePage: CollectionAfterChangeHook<Page> = ({
   doc,
   previousDoc,
-  req: { payload, context },
+  req: { payload, context, i18n },
 }) => {
   if (!context.disableRevalidate) {
     if (doc._status === 'published') {
-      const path = `/${doc.slug}`
+      const locale = i18n.language
+      const path = `/${locale}/${doc.slug}`
 
       payload.logger.info(`Revalidating Page at path: ${path}`)
 
@@ -20,9 +21,10 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 
     // If the post was previously published, we need to revalidate the old path
     if (previousDoc._status === 'published' && doc._status !== 'published') {
-      const oldPath = `/${previousDoc.slug}`
+      const locale = i18n.language
+      const oldPath = `/${locale}/${previousDoc.slug}`
 
-      payload.logger.info(`Revalidating old Page at path: ${oldPath}`)
+      payload.logger.info(`Revalidating old Page at path: ${oldPath} `)
 
       revalidatePath(oldPath)
     }
@@ -32,10 +34,11 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
 
 export const revalidateDeletePage: CollectionAfterDeleteHook<Page> = ({
   doc,
-  req: { context },
+  req: { context, i18n },
 }) => {
   if (!context.disableRevalidate) {
-    const path = `/${doc?.slug}`
+    const locale = i18n.language
+    const path = `/${locale}/${doc?.slug}`
 
     revalidatePath(path)
   }

@@ -9,8 +9,9 @@ import Image from 'next/image'
 import RichText from '@/components/RichText'
 import NoiseOverlay from '@/components/NoiseOverlay'
 import { ArrowLeft, ArrowUpRight, Figma, Github } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Button } from '@/components/ui/button'
+import { AvaibleLocale } from '@/i18n/routing'
 export async function generateStaticParams() {
   const payload = await getPayload({ config: config })
   const posts = await payload.find({
@@ -22,23 +23,30 @@ export async function generateStaticParams() {
     select: {
       slug: true,
     },
+    locale: 'all',
   })
 
-  const params = posts.docs.map(({ slug }) => {
-    return { slug }
+  const params = posts.docs.flatMap((doc) => {
+    const localizedSlugs = doc.slug || {}
+    return Object.entries(localizedSlugs).map(([locale, localizedSlug]) => ({
+      locale,
+      slug: localizedSlug,
+    }))
   })
 
+  console.log('generateStaticParams', params)
   return params
 }
 type Args = {
   params: Promise<{
     slug?: string
+    locale?: AvaibleLocale
   }>
 }
 
 const ProjectPage = async ({ params }: Args) => {
-  const { slug = '' } = await params
-  const project = await queryProjectBySlug({ slug })
+  const { slug = '', locale = 'en' } = await params
+  const project = await queryProjectBySlug({ slug, locale })
   if (!project) return notFound()
   return (
     <div>
@@ -111,27 +119,30 @@ const ProjectPage = async ({ params }: Args) => {
   )
 }
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  const project = await queryProjectBySlug({ slug })
+  const { slug = '', locale = 'en' } = await paramsPromise
+  const project = await queryProjectBySlug({ slug, locale })
 
   return generateMeta({ doc: project })
 }
-const queryProjectBySlug = cache(async ({ slug }: { slug: string }) => {
-  const payload = await getPayload({ config: config })
+const queryProjectBySlug = cache(
+  async ({ slug, locale }: { slug: string; locale: AvaibleLocale }) => {
+    const payload = await getPayload({ config: config })
 
-  const result = await payload.find({
-    collection: 'projects',
-    limit: 1,
-    pagination: false,
-    overrideAccess: false,
-    depth: 2,
-    where: {
-      slug: {
-        equals: slug,
+    const result = await payload.find({
+      collection: 'projects',
+      limit: 1,
+      pagination: false,
+      overrideAccess: false,
+      depth: 2,
+      where: {
+        slug: {
+          equals: slug,
+        },
       },
-    },
-  })
+      locale: locale,
+    })
 
-  return result.docs?.[0] || null
-})
+    return result.docs?.[0] || null
+  },
+)
 export default ProjectPage

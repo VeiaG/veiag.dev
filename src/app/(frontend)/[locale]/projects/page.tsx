@@ -4,6 +4,8 @@ import ProjectCard from '@/components/ProjectCard'
 import TagsFilter from '@/components/TagsFilter'
 
 import type { Where } from 'payload'
+import { AvaibleLocale } from '@/i18n/routing'
+import { getTranslations } from 'next-intl/server'
 
 export const metadata = {
   description:
@@ -13,20 +15,20 @@ export const metadata = {
 
 type ProjectsPageProps = {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+  params: Promise<{ locale: AvaibleLocale }>
 }
-const ProjectsPage = async ({ searchParams }: ProjectsPageProps) => {
+const ProjectsPage = async ({ searchParams, params }: ProjectsPageProps) => {
   const payload = await getPayload({ config: config })
-  //get current tags from url params (tags)
-  const params = await searchParams
-  // console.log(params)
+  const { locale } = await params
+  const searchParameters = await searchParams
 
   const query: Where =
-    params?.tags && params.tags.length > 0
+    searchParameters?.tags && searchParameters.tags.length > 0
       ? {
           and: [
             {
               'tags.title': {
-                in: params.tags,
+                in: searchParameters.tags,
               },
             },
           ],
@@ -52,6 +54,7 @@ const ProjectsPage = async ({ searchParams }: ProjectsPageProps) => {
       },
     },
     where: query,
+    locale: locale,
   })
 
   const tags = await payload.find({
@@ -63,11 +66,21 @@ const ProjectsPage = async ({ searchParams }: ProjectsPageProps) => {
       title: true,
     },
   })
+  const t = await getTranslations('ProjectsPage')
   return (
     <div className="container mx-auto">
       <TagsFilter
         tags={tags.docs}
-        initialTags={params?.tags ? (Array.isArray(params.tags) ? params.tags : [params.tags]) : []}
+        initialTags={
+          searchParameters?.tags
+            ? Array.isArray(searchParameters.tags)
+              ? searchParameters.tags
+              : [searchParameters.tags]
+            : []
+        }
+        translations={{
+          filters: t('filters'),
+        }}
       />
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 py-8">
         {projects.docs.map((project, index) => (

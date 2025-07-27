@@ -1,6 +1,31 @@
 {
   "HomePage": {
-    "title": "Привіт світ!",
-    "about": "Перейти на сторінку про мене"
+    "name": "Роман Паламар",
+    "title": "Full-stack Розробник",
+    "contact": "Зв'язатися зі мною",
+    "downloadCV": "Завантажити резюме",
+    "featuredProjects": "Вибрані проєкти",
+    "viewAllProjects": "Переглянути всі проєкти",
+    "aboutMe": "Про мене",
+    "skills": "Навички",
+    "blogPosts": "Блог",
+    "viewAllPosts": "Переглянути всі пости",
+    "workExperience": "Досвід роботи"
+  },
+  "ProjectsPage": {
+    "filters": "Фільтри"
+  },
+  "Globals": {
+    "back": "Назад",
+    "backToBlog": "Назад до блогу",
+    "readMore": "Читати далі",
+    "shareThisArticle": "Поділитися статтею"
+  },
+  "Navigation": {
+    "home": "Головна",
+    "blog": "Блог",
+    "projects": "Проєкти",
+    "about": "Про мене",
+    "contact": "Контакти"
   }
 }

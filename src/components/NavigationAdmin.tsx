@@ -3,8 +3,8 @@ import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Button } from './ui/button'
-import Link from 'next/link'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const NavigationAdmin = async () => {
   const headers = await getHeaders()

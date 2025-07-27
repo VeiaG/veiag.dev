@@ -3,6 +3,8 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 
+const SUPPORTED_LOCALES = ['en', 'uk']
+
 const getPostsSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
@@ -27,20 +29,26 @@ const getPostsSitemap = unstable_cache(
         slug: true,
         updatedAt: true,
       },
+      locale: 'all',
     })
 
     const dateFallback = new Date().toISOString()
 
-    const sitemap = results.docs
-      ? results.docs
-          .filter((post) => Boolean(post?.slug))
-          .map((post) => ({
-            loc: `${SITE_URL}/blog/${post?.slug}`,
-            lastmod: post.updatedAt || dateFallback,
-          }))
-      : []
+    const sitemapEntries =
+      results.docs?.flatMap((post) => {
+        return SUPPORTED_LOCALES.flatMap((locale) => {
+          //@ts-expect-error : post.slug is an object with locale keys
+          const slug = post.slug?.[locale]
+          if (!slug) return []
 
-    return sitemap
+          return {
+            loc: `${SITE_URL}/${locale}/blog/${slug}`,
+            lastmod: post.updatedAt || dateFallback,
+          }
+        })
+      }) ?? []
+
+    return sitemapEntries
   },
   ['posts-sitemap'],
   {

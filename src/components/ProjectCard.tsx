@@ -2,7 +2,7 @@ import { Media, ProjectTag } from '@/payload-types'
 import Image from 'next/image'
 import NoiseOverlay from '@/components/NoiseOverlay'
 import { ArrowRight } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 type ProjectCardProps = {
   title: string
   description: string

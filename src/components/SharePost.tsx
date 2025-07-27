@@ -11,13 +11,19 @@ import { Button } from './ui/button'
 import { Facebook, Linkedin, Share2, Twitter } from 'lucide-react'
 import { getClientSideURL } from '@/lib/getURL'
 import { usePathname } from 'next/navigation'
-const SharePost = () => {
+const SharePost = ({
+  translation,
+}: {
+  translation: {
+    shareThis: string
+  }
+}) => {
   const base = getClientSideURL()
   const path = usePathname()
   const url = `${base}${path}`
   return (
     <div className="mt-8 py-4 border-t flex gap-2 justify-between items-center">
-      <span>Share this article</span>
+      <span>{translation.shareThis}</span>
       <div className="flex gap-2 items-center">
         <Button asChild variant="outline" size="icon" className="rounded-full">
           <TwitterShareButton url={url} resetButtonStyle={false}>

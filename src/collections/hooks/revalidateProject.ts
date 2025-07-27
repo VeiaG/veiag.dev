@@ -6,11 +6,12 @@ import { Post, Project } from '@/payload-types'
 export const revalidateProject: CollectionAfterChangeHook<Project> = ({
   doc,
   previousDoc,
-  req: { payload, context },
+  req: { payload, context, i18n },
 }) => {
   if (!context.disableRevalidate) {
     if (doc._status === 'published') {
-      const path = `/projects/${doc.slug}`
+      const locale = i18n.language
+      const path = `/${locale}/projects/${doc.slug}`
 
       payload.logger.info(`Revalidating post at path: ${path}`)
 
@@ -20,7 +21,8 @@ export const revalidateProject: CollectionAfterChangeHook<Project> = ({
 
     // If the post was previously published, we need to revalidate the old path
     if (previousDoc._status === 'published' && doc._status !== 'published') {
-      const oldPath = `/projects/${previousDoc.slug}`
+      const locale = i18n.language
+      const oldPath = `/${locale}/projects/${previousDoc.slug}`
 
       payload.logger.info(`Revalidating old post at path: ${oldPath}`)
 
@@ -33,10 +35,11 @@ export const revalidateProject: CollectionAfterChangeHook<Project> = ({
 
 export const revalidateDeleteProject: CollectionAfterDeleteHook<Post> = ({
   doc,
-  req: { context },
+  req: { context, i18n },
 }) => {
   if (!context.disableRevalidate) {
-    const path = `/projects/${doc?.slug}`
+    const locale = i18n.language
+    const path = `/${locale}/projects/${doc?.slug}`
 
     revalidatePath(path)
     revalidateTag('projects-sitemap')

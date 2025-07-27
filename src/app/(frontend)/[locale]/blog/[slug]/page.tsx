@@ -8,8 +8,10 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import RichText from '@/components/RichText'
 import { ArrowLeft, Calendar } from 'lucide-react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import SharePost from '@/components/SharePost'
+import { AvaibleLocale } from '@/i18n/routing'
+import { getTranslations } from 'next-intl/server'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: config })
@@ -22,10 +24,14 @@ export async function generateStaticParams() {
     select: {
       slug: true,
     },
+    locale: 'all',
   })
-
-  const params = posts.docs.map(({ slug }) => {
-    return { slug }
+  const params = posts.docs.flatMap((doc) => {
+    const localizedSlugs = doc.slug || {}
+    return Object.entries(localizedSlugs).map(([locale, localizedSlug]) => ({
+      locale,
+      slug: localizedSlug,
+    }))
   })
 
   return params
@@ -33,14 +39,17 @@ export async function generateStaticParams() {
 type Args = {
   params: Promise<{
     slug?: string
+    locale?: AvaibleLocale
   }>
 }
 
 const PostPage = async ({ params }: Args) => {
-  const { slug = '' } = await params
-  const post = await queryPostBySlug({ slug })
+  const { slug = '', locale = 'en' } = await params
+  const post = await queryPostBySlug({ slug, locale })
   const avatar = await getAvatar()
   if (!post) return notFound()
+
+  const t = await getTranslations('Globals')
   return (
     <div className="py-4 md:py-8 container mx-auto max-w-[900px] text-lg relative">
       <Link
@@ -48,7 +57,7 @@ const PostPage = async ({ params }: Args) => {
         className=" flex gap-1 items-center z-10 hover:text-yellow-500 transition-colors mb-6"
       >
         <ArrowLeft />
-        <span>Back to blog</span>
+        <span>{t('backToBlog')}</span>
       </Link>
       <div className="flex flex-col gap-4 justify-center col-span-2 mb-12">
         <h1 className="text-3xl md:text-5xl font-bold">{post.title}</h1>
@@ -97,17 +106,21 @@ const PostPage = async ({ params }: Args) => {
       </div>
 
       <RichText data={post.content} />
-      <SharePost />
+      <SharePost
+        translation={{
+          shareThis: t('shareThisArticle'),
+        }}
+      />
     </div>
   )
 }
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  const post = await queryPostBySlug({ slug })
+  const { slug = '', locale = 'en' } = await paramsPromise
+  const post = await queryPostBySlug({ slug, locale })
 
   return generateMeta({ doc: post })
 }
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryPostBySlug = cache(async ({ slug, locale }: { slug: string; locale: AvaibleLocale }) => {
   const payload = await getPayload({ config: config })
 
   const result = await payload.find({
@@ -121,6 +134,7 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
+    locale: locale,
   })
 
   return result.docs?.[0] || null

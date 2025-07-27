@@ -4,9 +4,17 @@ import { Menu } from 'lucide-react'
 import { Button } from './ui/button'
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
-const MobileNav = () => {
+const MobileNav = ({
+  translations,
+}: {
+  translations: {
+    blog: string
+    projects: string
+    about: string
+  }
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const toggle = () => setIsOpen(!isOpen)
   const close = () => setIsOpen(false)
@@ -28,13 +36,13 @@ const MobileNav = () => {
         />
         <div className="flex gap-4 items-end flex-col py-24 px-2">
           <Button variant="link" asChild className="z-10 text-2xl" onClick={close}>
-            <Link href="/blog">Blog</Link>
+            <Link href="/blog">{translations.blog}</Link>
           </Button>
           <Button variant="link" asChild className="z-10 text-2xl" onClick={close}>
-            <Link href="/projects">Projects</Link>
+            <Link href="/projects">{translations.projects}</Link>
           </Button>
           <Button variant="link" asChild className="z-10 text-2xl" onClick={close}>
-            <Link href="/#about">About</Link>
+            <Link href="/#about">{translations.about}</Link>
           </Button>
         </div>
       </motion.div>

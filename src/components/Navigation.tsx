@@ -1,10 +1,14 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import React from 'react'
 import { Button } from './ui/button'
 import NavigationAdmin from './NavigationAdmin'
 import MobileNav from './MobileNav'
+import { useLocale, useTranslations } from 'next-intl'
+import ChangeLocaleButton from './ChangeLocaleButton'
 
 const Navigation = () => {
+  const locale = useLocale()
+  const t = useTranslations('Navigation')
   return (
     <nav className="sticky top-0 py-4 z-50 w-full pb-6">
       <div
@@ -19,17 +23,24 @@ const Navigation = () => {
 
         <div className="hidden gap-1 items-center md:flex ">
           <Button variant="ghostBlurry" asChild className="z-10">
-            <Link href="/blog">Blog</Link>
+            <Link href="/blog">{t('blog')}</Link>
           </Button>
           <Button variant="ghostBlurry" asChild className="z-10">
-            <Link href="/projects">Projects</Link>
+            <Link href="/projects">{t('projects')}</Link>
           </Button>
           <Button variant="ghostBlurry" asChild className="z-10">
-            <Link href="/#about">About</Link>
+            <Link href="/#about">{t('about')}</Link>
           </Button>
+          <ChangeLocaleButton currentLocale={locale} />
           <NavigationAdmin />
         </div>
-        <MobileNav />
+        <MobileNav
+          translations={{
+            blog: t('blog'),
+            projects: t('projects'),
+            about: t('about'),
+          }}
+        />
       </div>
     </nav>
   )

@@ -2,15 +2,18 @@
 import React, { useEffect } from 'react'
 import { Button } from './ui/button'
 import { X } from 'lucide-react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from '@/i18n/navigation'
 type TagsFilterProps = {
   tags: {
     id: string
     title: string
   }[]
   initialTags: string[]
+  translations: {
+    filters: string
+  }
 }
-const TagsFilter: React.FC<TagsFilterProps> = ({ tags, initialTags }) => {
+const TagsFilter: React.FC<TagsFilterProps> = ({ tags, initialTags, translations }) => {
   const [selectedTags, setSelectedTags] = React.useState<string[]>(initialTags)
 
   const router = useRouter()
@@ -23,11 +26,11 @@ const TagsFilter: React.FC<TagsFilterProps> = ({ tags, initialTags }) => {
       searchParams.append('tags', tag)
     })
     router.push(`${pathname}?${searchParams.toString()}`)
-  }, [selectedTags])
+  }, [selectedTags, pathname, router])
 
   return (
     <div className="flex gap-2 items-center flex-wrap w-full">
-      <span>Filters:</span>
+      <span>{translations.filters}:</span>
       {selectedTags.map((tag) => (
         <Button
           key={tag}

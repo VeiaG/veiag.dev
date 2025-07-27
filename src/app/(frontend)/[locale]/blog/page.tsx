@@ -4,6 +4,8 @@ import BlogCard from '@/components/PostCard'
 import CollectionPagination from '@/components/CollectionPagination'
 import RichText from '@/components/RichText'
 import NoiseOverlay from '@/components/NoiseOverlay'
+import { AvaibleLocale } from '@/i18n/routing'
+import { getTranslations } from 'next-intl/server'
 
 export const metadata = {
   description:
@@ -12,10 +14,12 @@ export const metadata = {
 }
 type BlogPageProps = {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+  params: Promise<{ locale: AvaibleLocale }>
 }
-const BlogPage = async ({ searchParams }: BlogPageProps) => {
-  const params = await searchParams
-  const page = params?.page ? Number(params.page) : 1
+const BlogPage = async ({ searchParams, params }: BlogPageProps) => {
+  const searchParameters = await searchParams
+  const page = searchParameters?.page ? Number(searchParameters.page) : 1
+  const { locale } = await params
 
   const payload = await getPayload({ config: config })
   const posts = await payload.find({
@@ -38,6 +42,7 @@ const BlogPage = async ({ searchParams }: BlogPageProps) => {
         title: true,
       },
     },
+    locale: locale,
   })
   const blog = await payload.findGlobal({
     slug: 'blog',
@@ -52,8 +57,9 @@ const BlogPage = async ({ searchParams }: BlogPageProps) => {
         publishedAt: true,
       },
     },
+    locale: locale,
   })
-
+  const t = await getTranslations('Globals')
   return (
     <>
       <section className="py-24 relative">
@@ -78,6 +84,9 @@ const BlogPage = async ({ searchParams }: BlogPageProps) => {
               image={post.image}
               slug={post?.slug || ''}
               publishedAt={post.publishedAt}
+              translation={{
+                readMore: t('readMore'),
+              }}
             />
           ))}
         </div>

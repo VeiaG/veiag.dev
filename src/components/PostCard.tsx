@@ -1,6 +1,6 @@
 import { Media, PostCategory } from '@/payload-types'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { ArrowRight, Calendar } from 'lucide-react'
@@ -16,6 +16,9 @@ type BlogCardProps = {
   hideImage?: boolean
   className?: string
   isOnHomepage?: boolean
+  translation?: {
+    readMore: string
+  }
 }
 const BlogCard = ({
   title,
@@ -27,6 +30,7 @@ const BlogCard = ({
   hideImage = false,
   isOnHomepage = false,
   className,
+  translation,
 }: BlogCardProps) => {
   return (
     <Card className={cn(` ${hideImage ? '' : 'pt-0'}`, className)}>
@@ -68,7 +72,7 @@ const BlogCard = ({
           className="ml-auto mt-auto self-end flex items-center gap-2 flex-row"
         >
           <Link className="relative flex flex-col gap-0.5" href={`/blog/${slug}`}>
-            Read more <ArrowRight />
+            {translation?.readMore} <ArrowRight />
           </Link>
         </Button>
       </CardContent>

@@ -6,11 +6,12 @@ import { Post } from '@/payload-types'
 export const revalidatePost: CollectionAfterChangeHook<Post> = ({
   doc,
   previousDoc,
-  req: { payload, context },
+  req: { payload, context, i18n },
 }) => {
   if (!context.disableRevalidate) {
+    const locale = i18n.language
     if (doc._status === 'published') {
-      const path = `/blog/${doc.slug}`
+      const path = `/${locale}/blog/${doc.slug}`
 
       payload.logger.info(`Revalidating post at path: ${path}`)
 
@@ -20,7 +21,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
 
     // If the post was previously published, we need to revalidate the old path
     if (previousDoc._status === 'published' && doc._status !== 'published') {
-      const oldPath = `/blog/${previousDoc.slug}`
+      const oldPath = `/${locale}/blog/${previousDoc.slug}`
 
       payload.logger.info(`Revalidating old post at path: ${oldPath}`)
 
@@ -33,10 +34,11 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
 
 export const revalidateDeletePost: CollectionAfterDeleteHook<Post> = ({
   doc,
-  req: { context },
+  req: { context, i18n },
 }) => {
   if (!context.disableRevalidate) {
-    const path = `/blog/${doc?.slug}`
+    const locale = i18n.language
+    const path = `/${locale}/blog/${doc?.slug}`
 
     revalidatePath(path)
     revalidateTag('blog-sitemap')

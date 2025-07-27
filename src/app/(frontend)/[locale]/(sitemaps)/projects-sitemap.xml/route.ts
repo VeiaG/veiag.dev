@@ -2,6 +2,7 @@ import { getServerSideSitemap } from 'next-sitemap'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
+const SUPPORTED_LOCALES = ['en', 'uk']
 
 const getProjectsSitemap = unstable_cache(
   async () => {
@@ -27,6 +28,7 @@ const getProjectsSitemap = unstable_cache(
         slug: true,
         updatedAt: true,
       },
+      locale: 'all',
     })
 
     const dateFallback = new Date().toISOString()
@@ -38,18 +40,21 @@ const getProjectsSitemap = unstable_cache(
       },
     ]
 
-    const sitemap = results.docs
-      ? results.docs
-          .filter((project) => Boolean(project?.slug))
-          .map((project) => {
-            return {
-              loc: `${SITE_URL}/projects/${project?.slug}`,
-              lastmod: project.updatedAt || dateFallback,
-            }
-          })
-      : []
+    const sitemapEntries =
+      results.docs?.flatMap((post) => {
+        return SUPPORTED_LOCALES.flatMap((locale) => {
+          //@ts-expect-error : post.slug is an object with locale keys
+          const slug = post.slug?.[locale]
+          if (!slug) return []
 
-    return [...defaultSitemap, ...sitemap]
+          return {
+            loc: `${SITE_URL}/${locale}/blog/${slug}`,
+            lastmod: post.updatedAt || dateFallback,
+          }
+        })
+      }) ?? []
+
+    return [...defaultSitemap, ...sitemapEntries]
   },
   ['pages-sitemap'],
   {

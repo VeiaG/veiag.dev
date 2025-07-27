@@ -6,6 +6,7 @@ import { generateMeta } from '@/lib/generateMeta'
 import { notFound } from 'next/navigation'
 
 import RichText from '@/components/RichText'
+import { AvaibleLocale } from '@/i18n/routing'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: config })
@@ -29,12 +30,13 @@ export async function generateStaticParams() {
 type Args = {
   params: Promise<{
     slug?: string
+    locale?: AvaibleLocale
   }>
 }
 
 const CMSPage = async ({ params }: Args) => {
-  const { slug = '' } = await params
-  const post = await queryPageBySlug({ slug })
+  const { slug = '', locale = 'en' } = await params
+  const post = await queryPageBySlug({ slug, locale })
   if (!post) return notFound()
   return (
     <div className="py-4 md:py-8 container mx-auto max-w-[900px] text-lg relative">
@@ -47,12 +49,12 @@ const CMSPage = async ({ params }: Args) => {
   )
 }
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  const post = await queryPageBySlug({ slug })
+  const { slug = '', locale = 'en' } = await paramsPromise
+  const post = await queryPageBySlug({ slug, locale })
 
   return generateMeta({ doc: post })
 }
-const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryPageBySlug = cache(async ({ slug, locale }: { slug: string; locale: AvaibleLocale }) => {
   const payload = await getPayload({ config: config })
 
   const result = await payload.find({
@@ -66,6 +68,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
+    locale: locale,
   })
 
   return result.docs?.[0] || null

@@ -8,15 +8,25 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { ArrowUpRight, FileText, Send } from 'lucide-react'
 import ScrollButton from '@/components/ScrollButton'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import RichText from '@/components/RichText'
 import ProjectCard from '@/components/ProjectCard'
 import BlogCard from '@/components/PostCard'
 import ExperienceCard from '@/components/ExperienceCard'
 import { MotionSection } from '@/components/Motion'
-export default async function HomePage() {
+import { AvaibleLocale } from '@/i18n/routing'
+import NextLink from 'next/link'
+import { getTranslations } from 'next-intl/server'
+
+type Args = {
+  params: Promise<{
+    locale: AvaibleLocale
+  }>
+}
+export default async function HomePage({ params }: Args) {
   const payload = await getPayload({ config: config })
+  const { locale } = await params
   const homepage = await payload.findGlobal({
     slug: 'homepage',
     depth: 2,
@@ -37,7 +47,11 @@ export default async function HomePage() {
         publishedAt: true,
       },
     },
+    locale: locale,
   })
+  const t = await getTranslations('HomePage')
+  const gT = await getTranslations('Globals')
+  console.log(gT('readMore'))
   return (
     <div className="container mx-auto">
       <MotionSection
@@ -59,21 +73,21 @@ export default async function HomePage() {
             />
           )}
         </div>
-        <h1 className="text-6xl font-bold text-center">Roman Palamar</h1>
-        <p className="text-xl font-light">Full-stack Developer</p>
+        <h1 className="text-6xl font-bold text-center">{t('name')}</h1>
+        <p className="text-xl font-light">{t('title')}</p>
         <div className="flex gap-2 mt-4">
           <Button asChild>
             <Link href="https://t.me/veiag" target="_blank">
               <Send />
-              Contact me
+              {t('contact')}
             </Link>
           </Button>
           {homepage.cv && typeof homepage.cv !== 'string' && (
             <Button variant="ghost" asChild>
-              <Link href={homepage.cv.url || ''} target="_blank">
+              <NextLink href={homepage.cv.url || ''} target="_blank">
                 <FileText />
-                Download CV
-              </Link>
+                {t('downloadCV')}
+              </NextLink>
             </Button>
           )}
         </div>
@@ -87,7 +101,7 @@ export default async function HomePage() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.3 }}
       >
-        <h1 className="text-5xl font-bold text-center">Featured Projects</h1>
+        <h1 className="text-5xl font-bold text-center">{t('featuredProjects')}</h1>
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-12">
           {homepage.selectedProjects?.map((project, index) => {
             if (!project || typeof project === 'string') return null
@@ -105,7 +119,7 @@ export default async function HomePage() {
         </div>
         <Button variant="outline" className="ml-auto mt-4" asChild size="lg">
           <Link href="/projects">
-            View all projects
+            {t('viewAllProjects')}
             <ArrowUpRight />
           </Link>
         </Button>
@@ -119,14 +133,14 @@ export default async function HomePage() {
         className="py-12 grid gap-8 grid-cols-1 md:grid-cols-2 relative items-start"
         id="about"
       >
-        <h1 className="text-5xl font-bold col-span-1 md:col-span-2 text-center">About me</h1>
+        <h1 className="text-5xl font-bold col-span-1 md:col-span-2 text-center">{t('aboutMe')}</h1>
         <div className="text-md lg:text-xl">
           {homepage.about && <RichText data={homepage.about} className="space-y-2" />}
         </div>
         <Card className="sticky top-24">
           <CardContent>
             <div className="flex flex-col gap-2">
-              <h2 className="text-2xl">Skills</h2>
+              <h2 className="text-2xl">{t('skills')}</h2>
               <div className="flex gap-2 flex-wrap items-center">
                 {homepage.skills?.map((skill, index) => (
                   <div
@@ -148,7 +162,7 @@ export default async function HomePage() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.3 }}
       >
-        <h1 className="text-5xl font-bold text-center">Blog Posts</h1>
+        <h1 className="text-5xl font-bold text-center">{t('blogPosts')}</h1>
         <div className="grid gap-4 grid-cols-1  lg:grid-cols-5 mt-12 relative">
           <div className="relative col-span-1 lg:col-span-3">
             {homepage.selectedPosts?.[0] && typeof homepage.selectedPosts[0] !== 'string' && (
@@ -161,6 +175,9 @@ export default async function HomePage() {
                 publishedAt={homepage.selectedPosts[0].publishedAt}
                 className={`lg:sticky lg:top-24 ${homepage.selectedPosts.length < 5 ? 'h-full' : ''}`}
                 isOnHomepage
+                translation={{
+                  readMore: gT('readMore'),
+                }}
               />
             )}
           </div>
@@ -180,6 +197,9 @@ export default async function HomePage() {
                   publishedAt={post.publishedAt}
                   hideImage
                   isOnHomepage
+                  translation={{
+                    readMore: gT('readMore'),
+                  }}
                 />
               )
             })}
@@ -187,13 +207,13 @@ export default async function HomePage() {
         </div>
         <Button variant="outline" className="ml-auto mt-4" asChild size="lg">
           <Link href="/blog">
-            View all posts
+            {t('viewAllPosts')}
             <ArrowUpRight />
           </Link>
         </Button>
       </MotionSection>
       <section className="py-12 flex flex-col gap-12">
-        <h1 className="text-5xl font-bold text-center">Work Experience</h1>
+        <h1 className="text-5xl font-bold text-center">{t('workExperience')}</h1>
         <div className="flex flex-col gap-6 justify-center max-w-[800px] mx-auto">
           {homepage.workExperience?.map((job, index) => {
             if (!job || typeof job === 'string') return null
