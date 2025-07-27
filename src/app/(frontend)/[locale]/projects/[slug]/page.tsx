@@ -34,7 +34,6 @@ export async function generateStaticParams() {
     }))
   })
 
-  console.log('generateStaticParams', params)
   return params
 }
 type Args = {

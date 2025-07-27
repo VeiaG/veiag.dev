@@ -51,7 +51,6 @@ export default async function HomePage({ params }: Args) {
   })
   const t = await getTranslations('HomePage')
   const gT = await getTranslations('Globals')
-  console.log(gT('readMore'))
   return (
     <div className="container mx-auto">
       <MotionSection

@@ -34,16 +34,7 @@ const ExcalidrawWrapper: React.FC<ExcalidrawWrapperProps> = ({
       },
       files: excalidrawAPI.getFiles(),
     })
-    console.log({
-      elements,
-      appState: {
-        ...excalidrawAPI.getAppState(),
-        exportWithDarkMode: true,
-        exportBackground: false,
-      },
-      files: excalidrawAPI.getFiles(),
-    })
-    console.log(svg) //cosole logs as html elemet (svg)
+
     // save svg to file (blob saving bad , writing [object SVGSVGElement] in file)
     // save normally
     onSave(svg.outerHTML, JSON.stringify(elements))
