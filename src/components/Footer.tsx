@@ -1,41 +1,34 @@
 import { Link } from '@/i18n/navigation'
-import { Button } from './ui/button'
-import { Figma, Github, Linkedin, Mail } from 'lucide-react'
+import { Github, Figma, Linkedin, Mail } from 'lucide-react'
 
-const Footer = () => {
+const LINKS = [
+  { href: 'https://www.linkedin.com/in/veiag/', Icon: Linkedin, label: 'LinkedIn' },
+  { href: 'https://www.figma.com/@veiag',       Icon: Figma,    label: 'Figma'    },
+  { href: 'https://github.com/VeiaG',            Icon: Github,   label: 'GitHub'   },
+  { href: 'mailto:roman@veiag.dev',              Icon: Mail,     label: 'Email'    },
+]
+
+export default function Footer() {
   return (
-    <footer className="border-t py-4 mt-12">
-      <div className="container mx-auto flex gap-2 justify-between items-center">
-        <div>
+    <footer className="border-t border-term-border bg-term-bg py-3 px-8">
+      <div className="flex items-center justify-between gap-4 max-w-[900px] mx-auto">
+        <span className="text-term-dim text-[11px] font-mono">
           © {new Date().getFullYear()} veiag.dev
-          <span className="hidden md:inline">. All rights reserved.</span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="https://www.linkedin.com/in/veiag/" target="_blank">
-              <Linkedin />
+        </span>
+        <div className="flex items-center">
+          {LINKS.map(({ href, Icon, label }) => (
+            <Link
+              key={label}
+              href={href}
+              target="_blank"
+              aria-label={label}
+              className="h-10 w-10 flex items-center justify-center text-term-dim hover:text-term-amber transition-colors duration-150"
+            >
+              <Icon size={14} />
             </Link>
-          </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="https://www.figma.com/@veiag">
-              <Figma />
-            </Link>
-          </Button>
-
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="https://github.com/VeiaG" target="_blank">
-              <Github />
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="mailto:veiag.work@gmail.com">
-              <Mail />
-            </Link>
-          </Button>
+          ))}
         </div>
       </div>
     </footer>
   )
 }
-
-export default Footer

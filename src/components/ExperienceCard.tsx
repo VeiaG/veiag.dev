@@ -1,19 +1,17 @@
 import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
-import { MapPin } from 'lucide-react'
-import React from 'react'
 import RichText from './RichText'
-import { MotionDiv } from './Motion'
 
-type ExperienceCardProps = {
+type Props = {
   company: string
   position: string
   startDate: string
-  endDate: string
+  endDate?: string | null
   description: DefaultTypedEditorState
-  location: string
+  location?: string | null
   isPresent?: boolean
 }
-const ExperienceCard: React.FC<ExperienceCardProps> = ({
+
+export default function ExperienceCard({
   company,
   position,
   startDate,
@@ -21,36 +19,38 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   description,
   location,
   isPresent,
-}) => {
+}: Props) {
+  const start = new Date(startDate).toLocaleString('en-US', { month: 'short', year: 'numeric' })
+  const end   = isPresent
+    ? 'Present'
+    : endDate
+      ? new Date(endDate).toLocaleString('en-US', { month: 'short', year: 'numeric' })
+      : ''
+
   return (
-    <MotionDiv
-      className="flex flex-col gap-1 border-t border-b py-4"
-      initial={{ opacity: 0, y: -16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.7 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex gap-2 justify-between items-center">
-        <h2 className="text-xl md:text-2xl font-bold">{company}</h2>
-        <div className="text-sm flex items-center gap-1 text-right">
-          {location}
-          <MapPin className="h-4 w-4 " />
+    <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-4 py-6 border-b border-term-border last:border-b-0 animate-fade-in-up">
+      {/* Left: content */}
+      <div>
+        <div className="text-term-bright text-[14px] font-bold mb-1">
+          <span className="text-term-amber mr-2">▸</span>
+          {company}
+        </div>
+        <div className="text-term-muted text-[12px] mb-3">{position}</div>
+        <div className="text-term-dim text-[12px] leading-relaxed max-w-[560px]">
+          <RichText data={description} enableGutter={false} />
         </div>
       </div>
-      <div className="flex gap-2 justify-between items-center">
-        <h3 className="text-lg md:text-xl">{position}</h3>
-        <p className="text-zinc-50/80 text-right text-base md:text-base">
-          {new Date(startDate).toLocaleString('en-US', { month: 'long', year: 'numeric' })} -{' '}
-          {isPresent
-            ? 'Present'
-            : new Date(endDate).toLocaleString('en-US', { month: 'long', year: 'numeric' })}
-        </p>
+
+      {/* Right: meta */}
+      <div className="sm:text-right shrink-0">
+        {location && (
+          <div className="text-term-dim text-[11px] mb-1">{location}</div>
+        )}
+        <div className="text-term-muted text-[11px] whitespace-nowrap">{start} – {end}</div>
+        {isPresent && (
+          <div className="text-term-green text-[10px] tracking-wider mt-1">● CURRENT</div>
+        )}
       </div>
-      <div className="mt-2">
-        <RichText data={description} enableGutter={false} />
-      </div>
-    </MotionDiv>
+    </div>
   )
 }
-
-export default ExperienceCard

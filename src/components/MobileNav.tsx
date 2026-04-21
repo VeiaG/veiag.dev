@@ -1,52 +1,56 @@
 'use client'
 
-import { Menu } from 'lucide-react'
-import { Button } from './ui/button'
 import { useState } from 'react'
-import { motion } from 'motion/react'
 import { Link } from '@/i18n/navigation'
+import { Menu, X } from 'lucide-react'
 
-const MobileNav = ({
-  translations,
-}: {
-  translations: {
-    blog: string
-    projects: string
-    about: string
-  }
-}) => {
-  const [isOpen, setIsOpen] = useState(false)
-  const toggle = () => setIsOpen(!isOpen)
-  const close = () => setIsOpen(false)
+type Props = {
+  translations: { blog: string; projects: string; about: string }
+}
+
+const MobileNav = ({ translations }: Props) => {
+  const [open, setOpen] = useState(false)
+
   return (
     <div className="flex md:hidden">
-      <Button variant="outline" size="icon" onClick={toggle} className="z-[120]">
-        <Menu />
-      </Button>
-      <motion.div
-        initial={{ y: '-100%' }}
-        animate={{ y: isOpen ? 0 : '-100%' }}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        className={`fixed top-0 right-0  left-0 z-[-1]`}
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="h-12 w-12 flex items-center justify-center text-term-muted hover:text-term-amber transition-colors"
+        aria-label="Toggle menu"
       >
-        <div
-          className={`z-[-1] absolute w-full h-full  pointer-events-none inset-0 [mask:linear-gradient(black_60%,_transparent_100%)]
-           bg-[length:4px_4px] bg-[radial-gradient(transparent_1px,var(--color-zinc-950)_1px)] backdrop-blur-xs
-          `}
-        />
-        <div className="flex gap-4 items-end flex-col py-24 px-2">
-          <Button variant="link" asChild className="z-10 text-2xl" onClick={close}>
-            <Link href="/blog">{translations.blog}</Link>
-          </Button>
-          <Button variant="link" asChild className="z-10 text-2xl" onClick={close}>
-            <Link href="/projects">{translations.projects}</Link>
-          </Button>
-          <Button variant="link" asChild className="z-10 text-2xl" onClick={close}>
-            <Link href="/#about">{translations.about}</Link>
-          </Button>
+        {open ? <X size={18} /> : <Menu size={18} />}
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 top-12 z-[99] bg-term-bg border-t border-term-border flex flex-col">
+          <MobileLink href="/blog"     label={translations.blog}     prefix="./blog"     onClick={() => setOpen(false)} />
+          <MobileLink href="/projects" label={translations.projects} prefix="./projects" onClick={() => setOpen(false)} />
+          <MobileLink href="/#about"   label={translations.about}    prefix="./about"    onClick={() => setOpen(false)} />
         </div>
-      </motion.div>
+      )}
     </div>
+  )
+}
+
+function MobileLink({
+  href,
+  label,
+  prefix,
+  onClick,
+}: {
+  href: string
+  label: string
+  prefix: string
+  onClick: () => void
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="px-8 py-5 text-[15px] font-mono text-term-muted border-b border-term-border hover:text-term-amber hover:bg-term-amber/5 transition-colors"
+    >
+      <span className="text-term-dim">./</span>{label}
+    </Link>
   )
 }
 

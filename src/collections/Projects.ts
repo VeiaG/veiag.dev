@@ -139,6 +139,34 @@ export const Projects: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'status',
+      label: {
+        en: 'Status',
+        uk: 'Статус',
+      },
+      type: 'select',
+      defaultValue: 'active',
+      options: [
+        { label: 'Active',   value: 'active'   },
+        { label: 'Archived', value: 'archived' },
+      ],
+      admin: {
+        position: 'sidebar',
+      },
+    },
+    {
+      name: 'year',
+      label: {
+        en: 'Year',
+        uk: 'Рік',
+      },
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description: 'e.g. 2024 — displayed on project cards',
+      },
+    },
   ],
   hooks: {
     afterChange: [revalidateProject],

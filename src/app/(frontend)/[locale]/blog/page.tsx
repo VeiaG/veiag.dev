@@ -1,99 +1,136 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import BlogCard from '@/components/PostCard'
+import PostCard from '@/components/PostCard'
 import CollectionPagination from '@/components/CollectionPagination'
-import RichText from '@/components/RichText'
-import NoiseOverlay from '@/components/NoiseOverlay'
+import TerminalPrompt from '@/components/TerminalPrompt'
+import TerminalCursor from '@/components/TerminalCursor'
+import TerminalTag from '@/components/TerminalTag'
 import { AvaibleLocale } from '@/i18n/routing'
-import { getTranslations } from 'next-intl/server'
 
 export const metadata = {
-  description:
-    'Welcome to my blog! I share insights on web development, coding tips, and my experiences with modern technologies. Dive in and explore my latest thoughts and discoveries!',
-  title: 'veiag.dev - Blog',
+  title: 'Blog — veiag.dev',
+  description: 'Writing about web development, tools, and open-source.',
 }
-type BlogPageProps = {
+
+type Props = {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
   params: Promise<{ locale: AvaibleLocale }>
 }
-const BlogPage = async ({ searchParams, params }: BlogPageProps) => {
-  const searchParameters = await searchParams
-  const page = searchParameters?.page ? Number(searchParameters.page) : 1
+
+export default async function BlogPage({ searchParams, params }: Props) {
+  const sp     = await searchParams
+  const page   = sp?.page ? Number(sp.page) : 1
+  const filter = typeof sp?.tag === 'string' ? sp.tag : null
   const { locale } = await params
 
-  const payload = await getPayload({ config: config })
+  const payload = await getPayload({ config })
+
   const posts = await payload.find({
     collection: 'posts',
     depth: 1,
     limit: 8,
     sort: '_order',
-    page: page,
+    page,
     overrideAccess: false,
-    select: {
-      title: true,
-      slug: true,
-      shortDescription: true,
-      image: true,
-      categories: true,
-      publishedAt: true,
-    },
-    populate: {
-      'post-categories': {
-        title: true,
-      },
-    },
-    locale: locale,
+    select: { title: true, slug: true, shortDescription: true, image: true, categories: true, publishedAt: true },
+    populate: { 'post-categories': { title: true } },
+    locale,
   })
-  const blog = await payload.findGlobal({
-    slug: 'blog',
-    depth: 2,
-    populate: {
-      posts: {
-        title: true,
-        slug: true,
-        image: true,
-        categories: true,
-        shortDescription: true,
-        publishedAt: true,
-      },
-    },
-    locale: locale,
-  })
-  const t = await getTranslations('Globals')
+
+  /* Gather all tags from current posts for the filter bar */
+  const allTags = Array.from(
+    new Set(
+      posts.docs.flatMap(p =>
+        (p.categories ?? []).map(c => (typeof c === 'string' ? c : c.title)),
+      ),
+    ),
+  )
+
+  const displayed = filter
+    ? posts.docs.filter(p =>
+        (p.categories ?? []).some(c => (typeof c === 'string' ? c : c.title) === filter),
+      )
+    : posts.docs
+
   return (
-    <>
-      <section className="py-24 relative">
-        <NoiseOverlay className="opacity-70" />
-        <div className="bg-gradient-to-bl from-zinc-950 to-zinc-800/50 blur-2xl w-full h-full -z-10 absolute top-0 left-0" />
-        <div className="container mx-auto relative">
-          <div className="w-full lg:w-1/2">
-            {blog.hero && (
-              <RichText data={blog.hero} className=" [&_h1]:text-5xl text-xl space-y-2 " />
-            )}
-          </div>
+    <div className="max-w-[860px] mx-auto px-4 sm:px-8">
+
+      {/* Page header */}
+      <div className="pb-10 pt-12 border-b border-term-border mb-0">
+        <div className="text-term-muted text-[12px] font-mono mb-2">
+          <span className="text-term-blue">roman</span>
+          <span className="text-term-dim">@</span>
+          <span className="text-term-amber">veiag.dev</span>
+          <span className="text-term-dim">:~ $</span>
         </div>
-      </section>
-      <section className="container mx-auto pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 py-6">
-          {posts.docs.map((post, index) => (
-            <BlogCard
-              key={index}
-              title={post.title}
-              description={post.shortDescription}
-              categories={post.categories}
-              image={post.image}
-              slug={post?.slug || ''}
-              publishedAt={post.publishedAt}
-              translation={{
-                readMore: t('readMore'),
-              }}
-            />
+        <div className="text-term-bright text-[13px] font-mono mb-6">
+          ls -la ./blog --sort=date --reverse
+        </div>
+        <h1 className="text-[30px] font-bold text-term-bright tracking-tight mb-2">
+          Blog <span className="text-term-amber">Posts</span>
+        </h1>
+        <p className="text-term-muted text-[12px]">
+          {posts.totalDocs} article{posts.totalDocs !== 1 ? 's' : ''} found · writing about web dev, tools &amp; open-source
+        </p>
+      </div>
+
+      {/* Tag filter bar */}
+      {allTags.length > 0 && (
+        <div className="flex items-center gap-0 border-b border-term-border bg-term-bg2 px-4 flex-wrap">
+          <span className="text-term-dim text-[11px] tracking-wider uppercase py-3 mr-3 shrink-0">
+            FILTER:
+          </span>
+          <TagFilterLink label="all" active={!filter} />
+          {allTags.map(tag => (
+            <TagFilterLink key={tag} label={tag} active={filter === tag} />
           ))}
         </div>
-        {posts.totalPages > 1 && <CollectionPagination totalPages={posts.totalPages} />}
-      </section>
-    </>
+      )}
+
+      {/* Posts list */}
+      <div className="border-x border-term-border animate-fade-in-up">
+        {displayed.map((post, i) => (
+          <PostCard
+            key={post.id}
+            title={post.title}
+            description={post.shortDescription}
+            categories={post.categories}
+            image={post.image}
+            slug={post.slug ?? ''}
+            publishedAt={post.publishedAt}
+            index={i}
+          />
+        ))}
+
+        <div className="px-6 py-4 text-term-dim text-[12px] font-mono flex items-center gap-2 border-t border-term-border">
+          <span className="text-term-amber">$</span>
+          more posts coming soon
+          <TerminalCursor />
+        </div>
+      </div>
+
+      {posts.totalPages > 1 && (
+        <div className="mt-6">
+          <CollectionPagination totalPages={posts.totalPages} />
+        </div>
+      )}
+    </div>
   )
 }
 
-export default BlogPage
+function TagFilterLink({ label, active }: { label: string; active: boolean }) {
+  return (
+    <a
+      href={label === 'all' ? '/blog' : `/blog?tag=${encodeURIComponent(label)}`}
+      className={`
+        px-4 py-3 text-[11px] font-mono border-r border-term-border transition-colors duration-150
+        ${active
+          ? 'text-term-amber bg-term-amber/5 hover:bg-term-amber/10'
+          : 'text-term-muted hover:text-term-text hover:bg-term-bg3'
+        }
+      `}
+    >
+      {label}
+    </a>
+  )
+}

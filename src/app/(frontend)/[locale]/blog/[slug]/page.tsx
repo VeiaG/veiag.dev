@@ -4,154 +4,146 @@ import config from '@payload-config'
 import { Metadata } from 'next'
 import { generateMeta } from '@/lib/generateMeta'
 import { notFound } from 'next/navigation'
-//TODO : update lexical from canary to stable release , when they fix image issue
 import Image from 'next/image'
 import RichText from '@/components/RichText'
-import { ArrowLeft, Calendar } from 'lucide-react'
-import { Link } from '@/i18n/navigation'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import TerminalFileHeader from '@/components/TerminalFileHeader'
+import TerminalBreadcrumb from '@/components/TerminalBreadcrumb'
+import TerminalTag from '@/components/TerminalTag'
 import SharePost from '@/components/SharePost'
+import { Link } from '@/i18n/navigation'
 import { AvaibleLocale } from '@/i18n/routing'
 import { getTranslations } from 'next-intl/server'
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: config })
+  const payload = await getPayload({ config })
   const posts = await payload.find({
     collection: 'posts',
     draft: false,
     limit: 1000,
     overrideAccess: false,
     pagination: false,
-    select: {
-      slug: true,
-    },
+    select: { slug: true },
     locale: 'all',
   })
-  const params = posts.docs.flatMap((doc) => {
-    const localizedSlugs = doc.slug || {}
-    return Object.entries(localizedSlugs).map(([locale, localizedSlug]) => ({
-      locale,
-      slug: localizedSlug,
-    }))
-  })
-
-  return params
-}
-type Args = {
-  params: Promise<{
-    slug?: string
-    locale?: AvaibleLocale
-  }>
+  return posts.docs.flatMap(doc =>
+    Object.entries(doc.slug || {}).map(([locale, slug]) => ({ locale, slug })),
+  )
 }
 
-const PostPage = async ({ params }: Args) => {
+type Args = { params: Promise<{ slug?: string; locale?: AvaibleLocale }> }
+
+export default async function PostPage({ params }: Args) {
   const { slug = '', locale = 'en' } = await params
-  const post = await queryPostBySlug({ slug, locale })
+  const post   = await queryPost(slug, locale)
   const avatar = await getAvatar()
-  if (!post) return notFound()
+  if (!post) notFound()
 
   const t = await getTranslations('Globals')
+
+  const dateStr = new Date(post.publishedAt).toISOString().slice(0, 10)
+
   return (
-    <div className="py-4 md:py-8 container mx-auto max-w-[900px] text-lg relative">
-      <Link
-        href="/blog"
-        className=" flex gap-1 items-center z-10 hover:text-yellow-500 transition-colors mb-6"
-      >
-        <ArrowLeft />
-        <span>{t('backToBlog')}</span>
-      </Link>
-      <div className="flex flex-col gap-4 justify-center col-span-2 mb-12">
-        <h1 className="text-3xl md:text-5xl font-bold">{post.title}</h1>
-        <div className="flex gap-4 items-center mb-2">
-          <div className="aspect-square relative overflow-hidden rounded-full w-[48px] h-[48px]">
-            {avatar && (
-              <Image
-                src={avatar.url || ''}
-                alt="Avatar"
-                width={48}
-                height={48}
-                placeholder="blur"
-                blurDataURL={avatar.blurDataUrl || ''}
-                className="object-cover rounded-full"
-              />
-            )}
-          </div>
-          <div className="flex flex-col">
-            <h2 className="font-bold ">veiag.dev</h2>
-            <div className="text-zinc-50/80 text-sm flex items-center gap-1">
-              <Calendar className="h-3 w-3" />
-              {new Date(post.publishedAt).toDateString()}
-            </div>
-          </div>
+    <div className="max-w-[720px] mx-auto px-4 sm:px-8 pb-16 animate-fade-in-up">
+      {/* Breadcrumb */}
+      <TerminalBreadcrumb
+        segments={[
+          { label: '~',    href: '/' },
+          { label: 'blog', href: '/blog' },
+          { label: post.slug ?? slug },
+        ]}
+      />
+
+      {/* Terminal file header */}
+      <TerminalFileHeader
+        filePath={`blog/${post.slug ?? slug}.md`}
+        cmd={`cat blog/${post.slug ?? slug}.md`}
+        frontmatter={[
+          { key: 'title',   value: post.title },
+          { key: 'date',    value: dateStr },
+          { key: 'tags',    value: `[${(post.categories ?? []).map(c => typeof c === 'string' ? c : c.title).join(', ')}]` },
+        ]}
+      />
+
+      {/* Hero image */}
+      {post.image && (
+        <div className="relative w-full aspect-video mb-10 border border-term-border overflow-hidden">
+          <Image
+            src={(typeof post.image === 'string' ? post.image : post.image.url) ?? ''}
+            alt={post.title}
+            fill
+            className="object-cover grayscale-[20%] brightness-90"
+            placeholder="blur"
+            blurDataURL={typeof post.image === 'object' ? (post.image.blurDataUrl ?? undefined) : undefined}
+          />
         </div>
-        <Image
-          src={(typeof post.image === 'string' ? post.image : post.image.url) || ''}
-          alt={post.title}
-          sizes="100vw"
-          className="object-cover h-auto w-full aspect-video rounded-lg"
-          style={{ width: '100%', height: 'auto' }}
-          width={0}
-          height={0}
-          placeholder="blur"
-          blurDataURL={
-            typeof post.image === 'string' ? undefined : (post.image.blurDataUrl ?? undefined)
-          }
-        />
-        <div className="flex gap-2 w-full flex-wrap">
-          {post.categories?.map((category, index) => (
-            <span key={index} className="bg-zinc-800 text-zinc-100 px-2 py-1 rounded-md text-sm">
-              {typeof category === 'string' ? category : category.title}
-            </span>
-          ))}
-        </div>
+      )}
+
+      {/* Post meta */}
+      <div className="flex flex-wrap items-center gap-3 mb-4 text-[12px] font-mono">
+        <span className="text-term-dim">{dateStr}</span>
+        {(post.categories ?? []).map((c, i) => (
+          <TerminalTag key={i} variant="amber">
+            {typeof c === 'string' ? c : c.title}
+          </TerminalTag>
+        ))}
       </div>
 
-      <RichText data={post.content} />
-      <SharePost
-        translation={{
-          shareThis: t('shareThisArticle'),
-        }}
-      />
+      {/* Title */}
+      <h1 className="text-[28px] sm:text-[34px] font-bold text-term-bright tracking-[-1px] leading-tight mb-8">
+        {post.title}
+      </h1>
+
+      <hr className="border-term-border mb-10" />
+
+      {/* Content */}
+      <div className="post-content text-term-text text-[14px] leading-[1.9] font-light">
+        <RichText data={post.content as unknown as DefaultTypedEditorState} />
+      </div>
+
+      <SharePost translation={{ shareThis: t('shareThisArticle') }} />
+
+      {/* Nav */}
+      <div className="flex justify-between pt-10 mt-16 border-t border-term-border gap-4">
+        <Link
+          href="/blog"
+          className="px-4 py-2.5 text-[12px] font-mono text-term-muted border border-term-border hover:text-term-amber hover:border-term-amber hover:bg-term-amber/5 transition-colors duration-150 flex items-center gap-2"
+        >
+          ← back to blog
+        </Link>
+        <Link
+          href="/"
+          className="px-4 py-2.5 text-[12px] font-mono text-term-muted border border-term-border hover:text-term-amber hover:border-term-amber hover:bg-term-amber/5 transition-colors duration-150 flex items-center gap-2"
+        >
+          ~/home ↗
+        </Link>
+      </div>
     </div>
   )
 }
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '', locale = 'en' } = await paramsPromise
-  const post = await queryPostBySlug({ slug, locale })
 
+export async function generateMetadata({ params: p }: Args): Promise<Metadata> {
+  const { slug = '', locale = 'en' } = await p
+  const post = await queryPost(slug, locale)
   return generateMeta({ doc: post })
 }
-const queryPostBySlug = cache(async ({ slug, locale }: { slug: string; locale: AvaibleLocale }) => {
-  const payload = await getPayload({ config: config })
 
+const queryPost = cache(async (slug: string, locale: AvaibleLocale) => {
+  const payload = await getPayload({ config })
   const result = await payload.find({
     collection: 'posts',
     limit: 1,
     pagination: false,
     overrideAccess: false,
     depth: 2,
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    locale: locale,
+    where: { slug: { equals: slug } },
+    locale,
   })
-
-  return result.docs?.[0] || null
+  return result.docs?.[0] ?? null
 })
 
 const getAvatar = cache(async () => {
-  const payload = await getPayload({ config: config })
-  const homepage = await payload.findGlobal({
-    slug: 'homepage',
-    depth: 2,
-    select: {
-      avatar: true,
-    },
-  })
-  if (homepage.avatar && typeof homepage.avatar !== 'string') {
-    return homepage.avatar
-  }
-  return null
+  const payload  = await getPayload({ config })
+  const homepage = await payload.findGlobal({ slug: 'homepage', depth: 2, select: { avatar: true } })
+  return typeof homepage.avatar !== 'string' ? homepage.avatar : null
 })
-export default PostPage
