@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { useRouter } from '@/i18n/navigation'
 import TerminalPrompt from './TerminalPrompt'
 
-/* ─── Fastfetch data ─────────────────────────────────────────────────────── */
+/* ─── Fastfetch defaults ─────────────────────────────────────────────────── */
 
 const ART = `
  ██╗   ██╗███████╗██╗ █████╗  ██████╗
@@ -14,7 +14,9 @@ const ART = `
   ╚████╔╝ ███████╗██║██║  ██║╚██████╔╝
    ╚═══╝  ╚══════╝╚═╝╚═╝  ╚═╝ ╚═════╝`
 
-const INFO: [string, string][] = [
+const DEFAULT_HEADER = 'roman@veiag.dev'
+
+const DEFAULT_ITEMS: [string, string][] = [
   ['',         'roman@veiag.dev'],
   ['',         '─────────────────────────'],
   ['OS',       'veiag.dev Portfolio 2.0'],
@@ -33,11 +35,20 @@ const INFO: [string, string][] = [
 
 /* ─── Types ──────────────────────────────────────────────────────────────── */
 
+type FastfetchProp = {
+  header?: string | null
+  items?: { key?: string | null; value: string }[] | null
+} | undefined
+
 type HistoryItem = { cmd: string; result: string }
 
 /* ─── Component ─────────────────────────────────────────────────────────── */
 
-export default function TerminalInputBar() {
+export default function TerminalInputBar({ fastfetch }: { fastfetch?: FastfetchProp }) {
+  const header = fastfetch?.header || DEFAULT_HEADER
+  const info: [string, string][] = fastfetch?.items?.length
+    ? [['' , header], ['', '─────────────────────────'], ...fastfetch.items.map(({ key, value }) => [key ?? '', value] as [string, string])]
+    : DEFAULT_ITEMS
   const [value,   setValue]   = useState('')
   const [history, setHistory] = useState<HistoryItem[]>([])
   const inputRef              = useRef<HTMLInputElement>(null)
@@ -102,7 +113,7 @@ export default function TerminalInputBar() {
                 <div className="flex gap-6 mt-1 overflow-x-auto">
                   <pre className="text-term-green text-[8px] leading-snug shrink-0">{ART}</pre>
                   <div className="flex flex-col justify-center gap-0.5 min-w-0">
-                    {INFO.map(([k, v], j) => (
+                    {info.map(([k, v], j) => (
                       <div key={j} className="text-[10px] leading-relaxed">
                         {k ? (
                           <>
@@ -112,7 +123,7 @@ export default function TerminalInputBar() {
                         ) : (
                           <span className={
                             j === 1               ? 'text-term-dim' :
-                            j === INFO.length - 1 ? 'tracking-[0.25em] text-term-text' :
+                            j === info.length - 1 ? 'tracking-[0.25em] text-term-text' :
                                                     'text-term-bright'
                           }>{v}</span>
                         )}

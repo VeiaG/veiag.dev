@@ -8,7 +8,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { AvaibleLocale } from '@/i18n/routing'
 import SectionHeader from '@/components/SectionHeader'
-import TerminalTag, { skillVariant } from '@/components/TerminalTag'
+import TerminalTag from '@/components/TerminalTag'
 import TerminalCursor from '@/components/TerminalCursor'
 import TerminalPrompt from '@/components/TerminalPrompt'
 import PostCard from '@/components/PostCard'
@@ -19,33 +19,6 @@ import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 type Args = { params: Promise<{ locale: AvaibleLocale }> }
 
-/* ─── Skill categorisation for the 3-col grid ───────────────────────────── */
-const CATEGORY_LISTS: Record<string, string[]> = {
-  Frontend: ['react', 'next.js', 'typescript', 'tailwind', 'tailwind css', 'css', 'html', 'vue', 'svelte'],
-  Backend:  ['node.js', 'payloadcms', 'payload cms', 'postgresql', 'mysql', 'mongodb', 'rest', 'trpc', 'graphql', 'express', 'python'],
-  Other:    ['design', 'figma', 'docker', 'git', 'linux', 'aws', 'vercel', 'c#'],
-}
-
-function categorise(skills: string[]): Record<string, string[]> {
-  const result: Record<string, string[]> = { Frontend: [], Backend: [], Other: [] }
-  const used = new Set<string>()
-
-  skills.forEach(skill => {
-    const s = skill.toLowerCase()
-    let placed = false
-    for (const [cat, list] of Object.entries(CATEGORY_LISTS)) {
-      if (list.some(k => s.includes(k))) {
-        result[cat].push(skill)
-        used.add(skill)
-        placed = true
-        break
-      }
-    }
-    if (!placed) result.Other.push(skill)
-  })
-
-  return result
-}
 
 export default async function HomePage({ params }: Args) {
   const { locale } = await params
@@ -63,8 +36,6 @@ export default async function HomePage({ params }: Args) {
 
   const t  = await getTranslations('HomePage')
   const gT = await getTranslations('Globals')
-
-  const skillGroups = categorise(homepage.skills?.filter(Boolean) as string[] ?? [])
 
   return (
     <div className="max-w-[900px] mx-auto px-4 sm:px-8">
@@ -106,13 +77,18 @@ export default async function HomePage({ params }: Args) {
             // Full-stack Developer · Kyiv, Ukraine
           </p>
 
-          {/* Skills as tags */}
+          {/* Hero tags — from heroTags field, fallback to legacy skills */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {(homepage.skills ?? []).map((skill, i) => (
-              <TerminalTag key={i} variant={skillVariant(String(skill))}>
-                {String(skill)}
-              </TerminalTag>
-            ))}
+            {(homepage as any).heroTags?.length > 0
+              ? (homepage as any).heroTags.map((tag: { label: string; variant?: string }, i: number) => (
+                  <TerminalTag key={i} variant={(tag.variant as any) ?? 'default'}>
+                    {tag.label}
+                  </TerminalTag>
+                ))
+              : (homepage.skills ?? []).map((skill, i) => (
+                  <TerminalTag key={i}>{String(skill)}</TerminalTag>
+                ))
+            }
           </div>
 
           {/* Action links */}
@@ -252,23 +228,48 @@ export default async function HomePage({ params }: Args) {
       <section className="mb-24 animate-fade-in-up">
         <SectionHeader cmd="cat skills.txt" comment="tech" />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-term-border border border-term-border mb-6">
-          {Object.entries(skillGroups).map(([cat, items]) => (
-            items.length > 0 && (
-              <div key={cat} className="bg-term-bg p-5">
-                <div className="text-[10px] font-mono text-term-dim tracking-[1.5px] uppercase mb-3">{cat}</div>
-                <div className="flex flex-col gap-1">
-                  {items.map(skill => (
-                    <div key={skill} className="text-[12px] text-term-text flex items-center gap-2">
-                      <span className="text-term-dim">─</span>
-                      {skill}
+        {(() => {
+          const cats = (homepage as any).skillCategories as
+            { category: string; items: string[] }[] | undefined
+          const hasCats = cats && cats.length > 0
+
+          return (
+            <div
+              className="grid gap-px bg-term-border border border-term-border mb-6"
+              style={{ gridTemplateColumns: `repeat(${hasCats ? Math.min(cats!.length, 3) : 1}, 1fr)` }}
+            >
+              {hasCats
+                ? cats!.map(({ category, items }) =>
+                    items?.length > 0 && (
+                      <div key={category} className="bg-term-bg p-5">
+                        <div className="text-[10px] font-mono text-term-dim tracking-[1.5px] uppercase mb-3">
+                          {category}
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          {items.map(skill => (
+                            <div key={skill} className="text-[12px] text-term-text flex items-center gap-2">
+                              <span className="text-term-dim">─</span>
+                              {skill}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ),
+                  )
+                : /* fallback to legacy flat list if no categories configured */
+                  <div className="bg-term-bg p-5 col-span-full">
+                    <div className="flex flex-wrap gap-2">
+                      {(homepage.skills ?? []).map((skill, i) => (
+                        <span key={i} className="text-[12px] text-term-text flex items-center gap-2">
+                          <span className="text-term-dim">─</span>{String(skill)}
+                        </span>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )
-          ))}
-        </div>
+                  </div>
+              }
+            </div>
+          )
+        })()}
 
         {/* About bio */}
         {homepage.about && (

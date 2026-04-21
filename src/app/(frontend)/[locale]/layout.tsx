@@ -7,6 +7,8 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
 import Script from 'next/script'
+import { getPayload } from 'payload'
+import config from '@payload-config'
 
 export const metadata = {
   description:
@@ -28,6 +30,12 @@ export default async function LocaleLayout({
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
 
+  const payload  = await getPayload({ config })
+  const homepage = await payload.findGlobal({ slug: 'homepage', select: { fastfetch: true } as any })
+  const fastfetch = (homepage as any).fastfetch as
+    | { header?: string | null; items?: { key?: string | null; value: string }[] | null }
+    | undefined
+
   return (
     <html lang={locale}>
       <Script
@@ -42,7 +50,7 @@ export default async function LocaleLayout({
           {/* pt-12 = nav height; pb-[49px] = terminal bar height */}
           <main className="grow pt-12 pb-[49px]">{children}</main>
           <Footer />
-          <TerminalInputBar />
+          <TerminalInputBar fastfetch={fastfetch} />
         </NextIntlClientProvider>
       </body>
     </html>
