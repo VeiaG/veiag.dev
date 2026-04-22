@@ -5,12 +5,12 @@ const LINKS = [
   { href: 'https://www.linkedin.com/in/veiag/', Icon: Linkedin, label: 'LinkedIn' },
   { href: 'https://www.figma.com/@veiag',       Icon: Figma,    label: 'Figma'    },
   { href: 'https://github.com/VeiaG',            Icon: Github,   label: 'GitHub'   },
-  { href: 'mailto:roman@veiag.dev',              Icon: Mail,     label: 'Email'    },
+  { href: 'mailto:romapalamar.veiag@gmail.com',              Icon: Mail,     label: 'Email'    },
 ]
 
 export default function Footer() {
   return (
-    <footer className="border-t border-term-border bg-term-bg py-3 px-8">
+    <footer className="border-t border-term-border bg-term-bg pt-3 pb-[calc(0.75rem+49px)] px-8">
       <div className="flex items-center justify-between gap-4 max-w-[900px] mx-auto">
         <span className="text-term-dim text-[11px] font-mono">
           © {new Date().getFullYear()} veiag.dev

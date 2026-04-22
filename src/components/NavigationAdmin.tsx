@@ -14,7 +14,7 @@ const NavigationAdmin = async () => {
     return null
   }
   return (
-    <Button variant="ghostBlurry" asChild className="z-10" size="icon">
+    <Button variant="ghostBlurry" asChild className="z-10 size-12 " size="icon">
       <Link href="/admin">
         <picture>
           <source srcSet="https://raw.githubusercontent.com/payloadcms/payload/main/packages/ui/src/assets/payload-favicon.svg" />

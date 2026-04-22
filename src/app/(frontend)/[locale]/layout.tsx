@@ -31,10 +31,15 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound()
 
   const payload  = await getPayload({ config })
-  const homepage = await payload.findGlobal({ slug: 'homepage', select: { fastfetch: true } as any })
-  const fastfetch = (homepage as any).fastfetch as
+  const homepage = await payload.findGlobal({
+    slug: 'homepage',
+    select: { fastfetch: true, workExperience: true, skillCategories: true } as any,
+  })
+  const fastfetch   = (homepage as any).fastfetch as
     | { header?: string | null; items?: { key?: string | null; value: string }[] | null }
     | undefined
+  const experience  = (homepage as any).workExperience  as any[] | undefined
+  const skills      = (homepage as any).skillCategories as any[] | undefined
 
   return (
     <html lang={locale}>
@@ -50,7 +55,7 @@ export default async function LocaleLayout({
           {/* pt-12 = nav height; pb-[49px] = terminal bar height */}
           <main className="grow pt-12 pb-[49px]">{children}</main>
           <Footer />
-          <TerminalInputBar fastfetch={fastfetch} />
+          <TerminalInputBar fastfetch={fastfetch} experience={experience} skills={skills} />
         </NextIntlClientProvider>
       </body>
     </html>

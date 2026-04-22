@@ -44,7 +44,7 @@ export default async function PostPage({ params }: Args) {
   const dateStr = new Date(post.publishedAt).toISOString().slice(0, 10)
 
   return (
-    <div className="max-w-[720px] mx-auto px-4 sm:px-8 pb-16 animate-fade-in-up">
+    <div className="max-w-[900px] mx-auto px-4 sm:px-8 pb-16 animate-fade-in-up">
       {/* Breadcrumb */}
       <TerminalBreadcrumb
         segments={[

@@ -13,7 +13,7 @@ import {
 import Image from 'next/image'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import CopyButton from './CopyButton'
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import {
   Carousel,
   CarouselContent,
@@ -51,7 +51,7 @@ const CustomUploadComponent: React.FC<{
         height={height || 0}
         src={url || ''}
         width={width || 0}
-        className="w-full object-cover rounded-lg "
+        className="w-full object-cover"
         placeholder="blur"
         blurDataURL={blurDataUrl ?? undefined}
       />
@@ -69,10 +69,10 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
   blocks: {
     Code: ({ node }) => {
       return (
-        <div className="relative">
+        <div className="relative not-prose">
           <CopyButton text={String(node.fields.code)} />
           <SyntaxHighlighter
-            style={vscDarkPlus}
+            style={atomDark}
             showLineNumbers
             wrapLongLines
             language={
@@ -82,6 +82,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
             }
             customStyle={{
               padding: '1.5rem 1rem',
+              background:'transparent'
             }}
             className="light-scroll"
           >
@@ -123,7 +124,7 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
                 return null
               }
               return (
-                <CarouselItem key={index} className="lg:basis-1/2 ">
+                <CarouselItem key={index} className="lg:basis-1/2">
                   <ImageModal
                     fullScreenContent={
                       <Image
@@ -139,15 +140,13 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
                       />
                     }
                   >
-                    <div className="relative p-1 h-auto  w-full aspect-video">
+                    <div className="relative w-full aspect-video border border-term-border overflow-hidden">
                       <Image
                         src={image.url}
                         alt={image.alt}
-                        width={image.width || 0}
-                        height={image.height || 0}
-                        style={{ width: 'auto', height: '100%' }}
+                        fill
                         placeholder="blur"
-                        className="object-cover rounded-xl not-prose  aspect-video"
+                        className="object-cover not-prose"
                         blurDataURL={image.blurDataUrl || ''}
                         draggable={false}
                       />
@@ -157,8 +156,8 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
               )
             })}
           </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
+          <CarouselPrevious className="rounded-none border-term-border bg-term-bg text-term-muted hover:border-term-amber hover:text-term-amber hover:bg-term-bg transition-colors" />
+          <CarouselNext    className="rounded-none border-term-border bg-term-bg text-term-muted hover:border-term-amber hover:text-term-amber hover:bg-term-bg transition-colors" />
         </Carousel>
       )
     },
