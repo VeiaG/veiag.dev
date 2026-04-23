@@ -248,8 +248,7 @@ export default function TerminalInputBar({
       if (!targetDir) {
         push({ type: 'ls-root', cmd: trimmed })
       } else {
-        setHistory(h => [...h, { type: 'ls-loading', cmd: trimmed }].slice(-10))
-        setValue('')
+        push({ type: 'ls-loading', cmd: trimmed })
         const items = await fetchLs(targetDir)
         setHistory(h => {
           const copy = [...h]
