@@ -103,7 +103,7 @@ export default function ProjectCard({
         </div>
         <div className="p-6 flex flex-col justify-between gap-4">
           <div>
-            {index !== undefined && <div className="text-term-dim text-[11px] mb-2">// {String(index + 1).padStart(3, '0')}</div>}
+            {index !== undefined && <div className="text-term-dim text-[11px] mb-2">{'// '}{String(index + 1).padStart(3, '0')}</div>}
             <div className="text-term-bright text-[18px] font-bold mb-2 group-hover:text-term-amber transition-colors">{title}</div>
             <p className="text-term-muted text-[12px] leading-relaxed line-clamp-3">{description}</p>
           </div>
@@ -148,7 +148,7 @@ export default function ProjectCard({
 
       {/* Body */}
       <div className="flex flex-col flex-1 p-5 pb-8 gap-2">
-        {index !== undefined && <div className="text-term-dim text-[10px] tracking-wider">// {String(index + 1).padStart(3, '0')}</div>}
+        {index !== undefined && <div className="text-term-dim text-[10px] tracking-wider">{'// '}{String(index + 1).padStart(3, '0')}</div>}
         <div className="text-term-bright text-[15px] font-semibold group-hover:text-term-amber transition-colors line-clamp-1">
           {title}
         </div>

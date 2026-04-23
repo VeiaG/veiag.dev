@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: Args) {
         {/* Left: info */}
         <div className="bg-term-bg2 p-8">
           <div className="text-term-dim text-[11px] font-mono tracking-wider mb-3">
-            // {String(1).padStart(3, '0')}
+            {'// '}{String(1).padStart(3, '0')}
           </div>
           <h1 className="text-[30px] sm:text-[36px] font-bold text-term-bright tracking-[-1.5px] leading-tight mb-3">
             {project.title}

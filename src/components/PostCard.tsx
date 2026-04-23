@@ -96,7 +96,7 @@ export default function PostCard({
       {/* Right side */}
       <div className="border-l border-term-border px-4 py-5 hidden sm:flex flex-col justify-between items-end min-w-[90px]">
         {index !== undefined && (
-          <span className="text-term-dim text-[11px]">// {String(index + 1).padStart(3, '0')}</span>
+          <span className="text-term-dim text-[11px]">{'// '}{String(index + 1).padStart(3, '0')}</span>
         )}
         <span className="text-term-dim text-lg transition-[color,transform] duration-150 group-hover:text-term-amber group-hover:translate-x-[2px] group-hover:translate-y-[-2px] inline-block">
           ↗

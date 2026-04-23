@@ -74,7 +74,7 @@ export default async function HomePage({ params }: Args) {
             Roman <span className="text-term-amber">Palamar</span>
           </h1>
           <p className="text-term-muted text-[14px] mb-5">
-            // Full-stack Developer · Kyiv, Ukraine
+            {'// Full-stack Developer · Kyiv, Ukraine'}
           </p>
 
           {/* Hero tags — from heroTags field, fallback to legacy skills */}
@@ -274,7 +274,7 @@ export default async function HomePage({ params }: Args) {
         {/* About bio */}
         {homepage.about && (
           <div className="bg-term-bg2 border border-term-border border-l-[3px] border-l-term-blue px-6 py-5 text-term-muted text-[13px] leading-[1.8]">
-            <span className="text-term-dim">/*</span>
+            <span className="text-term-dim">{'/*'}</span>
             <br />
             <RichText data={homepage.about as unknown as DefaultTypedEditorState} enableGutter={false} />
             <br />
