@@ -91,7 +91,6 @@ export const Homepage: GlobalConfig = {
       label: { en: 'Fastfetch', uk: 'Fastfetch' },
       admin: {
         description: 'Data shown when "fastfetch" is typed in the bottom terminal bar.',
-        initCollapsed: true,
       },
       fields: [
         {
