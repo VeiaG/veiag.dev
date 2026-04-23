@@ -79,6 +79,7 @@ export interface Config {
     posts: Post;
     files: File;
     pages: Page;
+    'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -93,6 +94,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     files: FilesSelect<false> | FilesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -100,6 +102,7 @@ export interface Config {
   db: {
     defaultIDType: string;
   };
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'uk') | ('en' | 'uk')[];
   globals: {
     homepage: Homepage;
     blog: Blog;
@@ -109,9 +112,10 @@ export interface Config {
     blog: BlogSelect<false> | BlogSelect<true>;
   };
   locale: 'en' | 'uk';
-  user: User & {
-    collection: 'users';
+  widgets: {
+    collections: CollectionsWidget;
   };
+  user: User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -219,6 +223,7 @@ export interface User {
       }[]
     | null;
   password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -243,7 +248,7 @@ export interface Project {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -260,7 +265,7 @@ export interface Project {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -276,6 +281,11 @@ export interface Project {
   githubLink?: string | null;
   figmaLink?: string | null;
   projectLink?: string | null;
+  status?: ('active' | 'archived') | null;
+  /**
+   * e.g. 2024 — displayed on project cards
+   */
+  year?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -313,7 +323,7 @@ export interface Post {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -369,7 +379,7 @@ export interface Page {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -393,6 +403,23 @@ export interface Page {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv".
+ */
+export interface PayloadKv {
+  id: string;
+  key: string;
+  data:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -542,6 +569,8 @@ export interface ProjectsSelect<T extends boolean = true> {
   githubLink?: T;
   figmaLink?: T;
   projectLink?: T;
+  status?: T;
+  year?: T;
   meta?:
     | T
     | {
@@ -627,6 +656,14 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-kv_select".
+ */
+export interface PayloadKvSelect<T extends boolean = true> {
+  key?: T;
+  data?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -669,7 +706,7 @@ export interface Homepage {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -680,6 +717,51 @@ export interface Homepage {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Define skill groups shown in the terminal skills grid (e.g. Frontend, Backend, Other).
+   */
+  skillCategories?:
+    | {
+        category: string;
+        /**
+         * Each skill shown as a row inside the category column.
+         */
+        items: string[];
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tech tags displayed in the whoami hero section. Each tag can have a colour variant.
+   */
+  heroTags?:
+    | {
+        label: string;
+        variant?: ('default' | 'green' | 'blue' | 'amber') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Data shown when "fastfetch" is typed in the bottom terminal bar.
+   */
+  fastfetch?: {
+    /**
+     * Displayed as the bold first line above the separator.
+     */
+    header?: string | null;
+    /**
+     * Leave "Key" empty to output the value as a plain decoration row (separator, dots, etc.).
+     */
+    items?:
+      | {
+          key?: string | null;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * ⚠️ Deprecated — use "Skill Categories" and "Hero Tags" instead. This field is no longer rendered on the frontend.
+   */
   skills?: string[] | null;
   selectedProjects?: (string | Project)[] | null;
   selectedPosts?: (string | Post)[] | null;
@@ -693,7 +775,7 @@ export interface Homepage {
           root: {
             type: string;
             children: {
-              type: string;
+              type: any;
               version: number;
               [k: string]: unknown;
             }[];
@@ -722,7 +804,7 @@ export interface Blog {
     root: {
       type: string;
       children: {
-        type: string;
+        type: any;
         version: number;
         [k: string]: unknown;
       }[];
@@ -744,6 +826,32 @@ export interface HomepageSelect<T extends boolean = true> {
   avatar?: T;
   cv?: T;
   about?: T;
+  skillCategories?:
+    | T
+    | {
+        category?: T;
+        items?: T;
+        id?: T;
+      };
+  heroTags?:
+    | T
+    | {
+        label?: T;
+        variant?: T;
+        id?: T;
+      };
+  fastfetch?:
+    | T
+    | {
+        header?: T;
+        items?:
+          | T
+          | {
+              key?: T;
+              value?: T;
+              id?: T;
+            };
+      };
   skills?: T;
   selectedProjects?: T;
   selectedPosts?: T;
@@ -772,6 +880,16 @@ export interface BlogSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_widget".
+ */
+export interface CollectionsWidget {
+  data?: {
+    [k: string]: unknown;
+  };
+  width: 'full';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
