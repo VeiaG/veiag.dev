@@ -14,6 +14,7 @@ import { ProjectTags } from './collections/ProjectTags'
 import { Projects } from './collections/Projects'
 import { Apps } from './collections/Apps'
 import { seoPlugin } from '@payloadcms/plugin-seo'
+import { payloadEnhancedSidebar } from '@veiag/payload-enhanced-sidebar'
 import { en } from '@payloadcms/translations/languages/en'
 import { uk } from '@payloadcms/translations/languages/uk'
 import { blurDataUrlsPlugin } from '@oversightstudio/blur-data-urls'
@@ -69,8 +70,59 @@ export default buildConfig({
   sharp,
   plugins: [
     payloadCloudPlugin(),
+    payloadEnhancedSidebar({
+      tabs: [
+        {
+          id: 'dashboard',
+          type: 'link',
+          href: '/',
+          icon: 'House',
+          label: { en: 'Dashboard', uk: 'Головна' },
+        },
+        {
+          id: 'portfolio',
+          type: 'tab',
+          icon: 'FolderKanban',
+          label: { en: 'Portfolio', uk: 'Портфоліо' },
+          collections: ['projects', 'apps', 'project-tags'],
+          globals: ['apps-page'],
+        },
+        {
+          id: 'blog',
+          type: 'tab',
+          icon: 'Newspaper',
+          label: { en: 'Blog', uk: 'Блог' },
+          collections: ['posts', 'post-categories', 'files'],
+          globals: ['blog'],
+        },
+        {
+          id: 'pages',
+          type: 'tab',
+          icon: 'LayoutTemplate',
+          label: { en: 'Pages', uk: 'Сторінки' },
+          collections: ['pages'],
+          globals: ['homepage'],
+        },
+        {
+          id: 'media',
+          type: 'link',
+          href: '/collections/media',
+          icon: 'Image',
+          label: { en: 'Media', uk: 'Медіа' },
+        },
+        {
+          id: 'users',
+          type: 'link',
+          href: '/collections/users',
+          icon: 'Users',
+          label: { en: 'Users', uk: 'Користувачі' },
+          position: 'bottom',
+        },
+      ],
+    }),
     seoPlugin({
-      collections: ['projects', 'posts', 'pages'],
+      collections: ['projects', 'apps', 'posts', 'pages'],
+      tabbedUI: true,
       uploadsCollection: 'media',
       generateTitle: ({ doc }) => `${doc.title}`,
       generateDescription: ({ doc }) => doc.description || doc.shortDescription,

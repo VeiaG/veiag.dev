@@ -249,6 +249,8 @@ export interface Project {
   _order?: string | null;
   title: string;
   shortDescription: string;
+  image: string | Media;
+  tags?: (string | ProjectTag)[] | null;
   fullDescription: {
     root: {
       type: string;
@@ -264,8 +266,6 @@ export interface Project {
     };
     [k: string]: unknown;
   };
-  image: string | Media;
-  tags?: (string | ProjectTag)[] | null;
   content: {
     root: {
       type: string;
@@ -281,6 +281,14 @@ export interface Project {
     };
     [k: string]: unknown;
   };
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   slug?: string | null;
   slugLock?: boolean | null;
   githubLink?: string | null;
@@ -291,14 +299,6 @@ export interface Project {
    * e.g. 2024 — displayed on project cards
    */
   year?: string | null;
-  meta?: {
-    title?: string | null;
-    description?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (string | null) | Media;
-  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -312,17 +312,48 @@ export interface App {
   _order?: string | null;
   title: string;
   /**
-   * What it does and how to use it — shown on the card
+   * Short summary — shown on the card and under the title
    */
   description: string;
-  url: string;
+  githubLink: string;
+  /**
+   * Only for web apps — adds a "launch" button
+   */
+  url?: string | null;
   image?: (string | null) | Media;
   tags?: (string | ProjectTag)[] | null;
+  /**
+   * Shown on the app page: features, how to install and use
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   /**
    * Shows a "made with AI" badge on the card
    */
   madeWithAI?: boolean | null;
-  githubLink?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -594,17 +625,10 @@ export interface ProjectsSelect<T extends boolean = true> {
   _order?: T;
   title?: T;
   shortDescription?: T;
-  fullDescription?: T;
   image?: T;
   tags?: T;
+  fullDescription?: T;
   content?: T;
-  slug?: T;
-  slugLock?: T;
-  githubLink?: T;
-  figmaLink?: T;
-  projectLink?: T;
-  status?: T;
-  year?: T;
   meta?:
     | T
     | {
@@ -612,6 +636,13 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  slug?: T;
+  slugLock?: T;
+  githubLink?: T;
+  figmaLink?: T;
+  projectLink?: T;
+  status?: T;
+  year?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -624,11 +655,21 @@ export interface AppsSelect<T extends boolean = true> {
   _order?: T;
   title?: T;
   description?: T;
+  githubLink?: T;
   url?: T;
   image?: T;
   tags?: T;
+  content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   madeWithAI?: T;
-  githubLink?: T;
+  slug?: T;
+  slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -769,6 +810,16 @@ export interface Homepage {
     [k: string]: unknown;
   } | null;
   /**
+   * Tech tags displayed in the whoami hero section. Each tag can have a colour variant.
+   */
+  heroTags?:
+    | {
+        label: string;
+        variant?: ('default' | 'green' | 'blue' | 'amber') | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * Define skill groups shown in the terminal skills grid (e.g. Frontend, Backend, Other).
    */
   skillCategories?:
@@ -781,35 +832,6 @@ export interface Homepage {
         id?: string | null;
       }[]
     | null;
-  /**
-   * Tech tags displayed in the whoami hero section. Each tag can have a colour variant.
-   */
-  heroTags?:
-    | {
-        label: string;
-        variant?: ('default' | 'green' | 'blue' | 'amber') | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Data shown when "fastfetch" is typed in the bottom terminal bar.
-   */
-  fastfetch?: {
-    /**
-     * Displayed as the bold first line above the separator.
-     */
-    header?: string | null;
-    /**
-     * Leave "Key" empty to output the value as a plain decoration row (separator, dots, etc.).
-     */
-    items?:
-      | {
-          key?: string | null;
-          value: string;
-          id?: string | null;
-        }[]
-      | null;
-  };
   /**
    * ⚠️ Deprecated — use "Skill Categories" and "Hero Tags" instead. This field is no longer rendered on the frontend.
    */
@@ -842,6 +864,25 @@ export interface Homepage {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Data shown when "fastfetch" is typed in the bottom terminal bar.
+   */
+  fastfetch?: {
+    /**
+     * Displayed as the bold first line above the separator.
+     */
+    header?: string | null;
+    /**
+     * Leave "Key" empty to output the value as a plain decoration row (separator, dots, etc.).
+     */
+    items?:
+      | {
+          key?: string | null;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -904,13 +945,6 @@ export interface HomepageSelect<T extends boolean = true> {
   avatar?: T;
   cv?: T;
   about?: T;
-  skillCategories?:
-    | T
-    | {
-        category?: T;
-        items?: T;
-        id?: T;
-      };
   heroTags?:
     | T
     | {
@@ -918,17 +952,12 @@ export interface HomepageSelect<T extends boolean = true> {
         variant?: T;
         id?: T;
       };
-  fastfetch?:
+  skillCategories?:
     | T
     | {
-        header?: T;
-        items?:
-          | T
-          | {
-              key?: T;
-              value?: T;
-              id?: T;
-            };
+        category?: T;
+        items?: T;
+        id?: T;
       };
   skills?: T;
   selectedProjects?: T;
@@ -944,6 +973,18 @@ export interface HomepageSelect<T extends boolean = true> {
         location?: T;
         isPresent?: T;
         id?: T;
+      };
+  fastfetch?:
+    | T
+    | {
+        header?: T;
+        items?:
+          | T
+          | {
+              key?: T;
+              value?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

@@ -1,3 +1,4 @@
+import { slugField } from '@/fields/slug'
 import type { CollectionConfig } from 'payload'
 import { revalidateApps, revalidateDeleteApp } from './hooks/revalidateApps'
 
@@ -15,7 +16,7 @@ export const Apps: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'url', 'madeWithAI', '_status'],
+    defaultColumns: ['title', 'githubLink', 'madeWithAI', '_status'],
     group: {
       en: 'Projects',
       uk: 'Проекти',
@@ -45,58 +46,102 @@ export const Apps: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      label: {
-        en: 'Title',
-        uk: 'Назва',
-      },
-      type: 'text',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'description',
-      label: {
-        en: 'Description',
-        uk: 'Опис',
-      },
-      type: 'textarea',
-      required: true,
-      localized: true,
-      admin: {
-        description: {
-          en: 'What it does and how to use it — shown on the card',
-          uk: 'Що робить і як користуватись — показується на картці',
+      type: 'tabs',
+      tabs: [
+        {
+          label: { en: 'Overview', uk: 'Загальне' },
+          fields: [
+            {
+              name: 'title',
+              label: {
+                en: 'Title',
+                uk: 'Назва',
+              },
+              type: 'text',
+              required: true,
+              localized: true,
+            },
+            {
+              name: 'description',
+              label: {
+                en: 'Description',
+                uk: 'Опис',
+              },
+              type: 'textarea',
+              required: true,
+              localized: true,
+              admin: {
+                description: {
+                  en: 'Short summary — shown on the card and under the title',
+                  uk: 'Короткий опис — показується на картці та під заголовком',
+                },
+              },
+            },
+            {
+              name: 'githubLink',
+              label: {
+                en: 'Github Link',
+                uk: 'Посилання на Github',
+              },
+              type: 'text',
+              required: true,
+            },
+            {
+              name: 'url',
+              label: {
+                en: 'Live URL',
+                uk: 'Посилання на сайт',
+              },
+              type: 'text',
+              admin: {
+                description: {
+                  en: 'Only for web apps — adds a "launch" button',
+                  uk: 'Тільки для веб-апок — додає кнопку "launch"',
+                },
+              },
+            },
+            {
+              name: 'image',
+              label: {
+                en: 'Image',
+                uk: 'Зображення',
+              },
+              type: 'upload',
+              relationTo: 'media',
+            },
+            {
+              name: 'tags',
+              label: {
+                en: 'Tags',
+                uk: 'Теги',
+              },
+              type: 'relationship',
+              relationTo: 'project-tags',
+              hasMany: true,
+            },
+          ],
         },
-      },
-    },
-    {
-      name: 'url',
-      label: {
-        en: 'App URL',
-        uk: 'Посилання на застосунок',
-      },
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'image',
-      label: {
-        en: 'Image',
-        uk: 'Зображення',
-      },
-      type: 'upload',
-      relationTo: 'media',
-    },
-    {
-      name: 'tags',
-      label: {
-        en: 'Tags',
-        uk: 'Теги',
-      },
-      type: 'relationship',
-      relationTo: 'project-tags',
-      hasMany: true,
+        {
+          label: { en: 'Content', uk: 'Контент' },
+          fields: [
+            {
+              name: 'content',
+              label: {
+                en: 'Content',
+                uk: 'Контент',
+              },
+              type: 'richText',
+              localized: true,
+              admin: {
+                description: {
+                  en: 'Shown on the app page: features, how to install and use',
+                  uk: 'Показується на сторінці апки: можливості, як встановити й користуватись',
+                },
+              },
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'madeWithAI',
@@ -114,17 +159,7 @@ export const Apps: CollectionConfig = {
         },
       },
     },
-    {
-      name: 'githubLink',
-      label: {
-        en: 'Github Link',
-        uk: 'Посилання на Github',
-      },
-      type: 'text',
-      admin: {
-        position: 'sidebar',
-      },
-    },
+    ...slugField(),
   ],
   hooks: {
     afterChange: [revalidateApps],

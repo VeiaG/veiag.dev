@@ -132,9 +132,9 @@ export default function TerminalInputBar({
       const res  = await fetch('/api/apps?limit=0&sort=_order&depth=0')
       const data = await res.json()
       const items: LsItem[] = (data.docs ?? []).map(
-        (a: { id: string; title?: string; url: string; madeWithAI?: boolean | null }) => {
-          const slug = toSlug(a.title ?? '') || a.id
-          return { name: slug, hint: `${a.title ?? ''}${a.madeWithAI ? ' ✦ AI' : ''}`, slug, url: a.url }
+        (a: { id: string; title?: string; slug?: string | null; url?: string | null; githubLink?: string | null; madeWithAI?: boolean | null }) => {
+          const slug = a.slug || toSlug(a.title ?? '') || a.id
+          return { name: slug, hint: `${a.title ?? ''}${a.madeWithAI ? ' ✦ AI' : ''}`, slug, url: a.url || a.githubLink || undefined }
         },
       )
       lsCache.current[dir] = items
@@ -343,17 +343,20 @@ export default function TerminalInputBar({
       }
     }
 
-    /* open <app> | ./<app> inside ~/apps → open the app in a new tab */
+    /* inside ~/apps: open <app> → app page, ./<app> → launch the app (or its repo) in a new tab */
     if (cwd === 'apps') {
-      const m = cmd.match(/^(?:open\s+|\.\/)([\w-]+)$/)
+      const m = cmd.match(/^(open\s+|\.\/)([\w-]+)$/)
       if (m) {
         const items = lsCache.current['apps'] ?? []
-        const found = items.find(i => i.slug === m[1])
-        if (found?.url) {
+        const found = items.find(i => i.slug === m[2])
+        if (found && m[1] !== './') {
+          push({ type: 'text', cmd: trimmed, result: `Opening /apps/${found.slug}...` })
+          router.push(`/apps/${found.slug}` as any)
+        } else if (found?.url) {
           push({ type: 'text', cmd: trimmed, result: `Launching ${found.slug}...` })
           window.open(found.url, '_blank', 'noopener,noreferrer')
         } else {
-          push({ type: 'text', cmd: trimmed, result: `${m[1]}: command not found`, isError: true })
+          push({ type: 'text', cmd: trimmed, result: `${m[2]}: command not found`, isError: true })
         }
         return
       }
@@ -376,7 +379,7 @@ export default function TerminalInputBar({
         ]
         if (cwd === 'blog')     lines.push('Blog dir:    cat <slug>.md  open <slug>  [click file to open]')
         if (cwd === 'projects') lines.push('Projects dir: cd <slug>  open <slug>  [click dir to open]')
-        if (cwd === 'apps')     lines.push('Apps dir:    ./<app>  open <app>  [click app to launch]')
+        if (cwd === 'apps')     lines.push('Apps dir:    ./<app> (launch)  open <app>  [click app to open]')
         result = lines.join('\n')
         break
       }
@@ -472,17 +475,13 @@ export default function TerminalInputBar({
               {/* ls blog | ls projects — clickable items */}
               {h.type === 'ls-items' && (
                 <div className="flex flex-wrap gap-x-6 gap-y-0.5 mt-0.5 pl-2">
-                  {h.items.map(({ name, hint, slug, url }) => (
+                  {h.items.map(({ name, hint, slug }) => (
                     <button
                       key={name}
                       onClick={e => {
                         e.stopPropagation()
-                        if (h.dir === 'apps') {
-                          if (url) window.open(url, '_blank', 'noopener,noreferrer')
-                          return
-                        }
                         if (!slug) return
-                        router.push((h.dir === 'blog' ? `/blog/${slug}` : `/projects/${slug}`) as any)
+                        router.push(`/${h.dir}/${slug}` as any)
                       }}
                       className="flex items-center gap-1.5 group text-left"
                     >

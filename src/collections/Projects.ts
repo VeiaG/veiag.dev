@@ -46,64 +46,79 @@ export const Projects: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      label: {
-        en: 'Title',
-        uk: 'Назва',
-      },
-      type: 'text',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'shortDescription',
-      label: {
-        en: 'Short Description',
-        uk: 'Короткий опис',
-      },
-      type: 'textarea',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'fullDescription',
-      label: {
-        en: 'Full Description',
-        uk: 'Повний опис',
-      },
-      type: 'richText',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'image',
-      label: {
-        en: 'Image',
-        uk: 'Зображення',
-      },
-      type: 'upload',
-      relationTo: 'media',
-      required: true,
-    },
-    {
-      name: 'tags',
-      label: {
-        en: 'Tags',
-        uk: 'Теги',
-      },
-      type: 'relationship',
-      relationTo: 'project-tags',
-      hasMany: true,
-    },
-    {
-      name: 'content',
-      label: {
-        en: 'Content',
-        uk: 'Контент',
-      },
-      type: 'richText',
-      required: true,
-      localized: true,
+      type: 'tabs',
+      tabs: [
+        {
+          label: { en: 'Overview', uk: 'Загальне' },
+          fields: [
+            {
+              name: 'title',
+              label: {
+                en: 'Title',
+                uk: 'Назва',
+              },
+              type: 'text',
+              required: true,
+              localized: true,
+            },
+            {
+              name: 'shortDescription',
+              label: {
+                en: 'Short Description',
+                uk: 'Короткий опис',
+              },
+              type: 'textarea',
+              required: true,
+              localized: true,
+            },
+            {
+              name: 'image',
+              label: {
+                en: 'Image',
+                uk: 'Зображення',
+              },
+              type: 'upload',
+              relationTo: 'media',
+              required: true,
+            },
+            {
+              name: 'tags',
+              label: {
+                en: 'Tags',
+                uk: 'Теги',
+              },
+              type: 'relationship',
+              relationTo: 'project-tags',
+              hasMany: true,
+            },
+          ],
+        },
+        {
+          label: { en: 'Content', uk: 'Контент' },
+          fields: [
+            {
+              name: 'fullDescription',
+              label: {
+                en: 'Full Description',
+                uk: 'Повний опис',
+              },
+              type: 'richText',
+              required: true,
+              localized: true,
+            },
+            {
+              name: 'content',
+              label: {
+                en: 'Content',
+                uk: 'Контент',
+              },
+              type: 'richText',
+              required: true,
+              localized: true,
+            },
+          ],
+        },
+      ],
     },
     ...slugField(),
     {
