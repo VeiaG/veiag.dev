@@ -25,7 +25,7 @@ export default async function AppsPage({ params }: Props) {
     limit: 0,
     sort: '_order',
     overrideAccess: false,
-    select: { title: true, description: true, url: true, githubLink: true, tags: true, image: true, madeWithAI: true },
+    select: { title: true, slug: true, description: true, url: true, githubLink: true, tags: true, image: true, madeWithAI: true },
     populate: { 'project-tags': { title: true } },
     locale,
   })
@@ -62,6 +62,7 @@ export default async function AppsPage({ params }: Props) {
             <AppCard
               key={app.id}
               title={app.title}
+              slug={app.slug}
               description={app.description}
               url={app.url}
               githubLink={app.githubLink}

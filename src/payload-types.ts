@@ -217,7 +217,6 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -312,17 +311,48 @@ export interface App {
   _order?: string | null;
   title: string;
   /**
-   * What it does and how to use it — shown on the card
+   * Short summary — shown on the card and under the title
    */
   description: string;
-  url: string;
+  githubLink: string;
+  /**
+   * Only for web apps — adds a "launch" button
+   */
+  url?: string | null;
   image?: (string | null) | Media;
   tags?: (string | ProjectTag)[] | null;
   /**
    * Shows a "made with AI" badge on the card
    */
   madeWithAI?: boolean | null;
-  githubLink?: string | null;
+  /**
+   * Shown on the app page: features, how to install and use
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -547,7 +577,6 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
-  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -624,11 +653,21 @@ export interface AppsSelect<T extends boolean = true> {
   _order?: T;
   title?: T;
   description?: T;
+  githubLink?: T;
   url?: T;
   image?: T;
   tags?: T;
   madeWithAI?: T;
-  githubLink?: T;
+  content?: T;
+  slug?: T;
+  slugLock?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

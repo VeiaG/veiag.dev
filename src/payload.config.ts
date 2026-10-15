@@ -70,7 +70,7 @@ export default buildConfig({
   plugins: [
     payloadCloudPlugin(),
     seoPlugin({
-      collections: ['projects', 'posts', 'pages'],
+      collections: ['projects', 'apps', 'posts', 'pages'],
       uploadsCollection: 'media',
       generateTitle: ({ doc }) => `${doc.title}`,
       generateDescription: ({ doc }) => doc.description || doc.shortDescription,

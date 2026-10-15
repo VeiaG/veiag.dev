@@ -1,3 +1,4 @@
+import { slugField } from '@/fields/slug'
 import type { CollectionConfig } from 'payload'
 import { revalidateApps, revalidateDeleteApp } from './hooks/revalidateApps'
 
@@ -15,7 +16,7 @@ export const Apps: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'url', 'madeWithAI', '_status'],
+    defaultColumns: ['title', 'githubLink', 'madeWithAI', '_status'],
     group: {
       en: 'Projects',
       uk: 'Проекти',
@@ -65,19 +66,33 @@ export const Apps: CollectionConfig = {
       localized: true,
       admin: {
         description: {
-          en: 'What it does and how to use it — shown on the card',
-          uk: 'Що робить і як користуватись — показується на картці',
+          en: 'Short summary — shown on the card and under the title',
+          uk: 'Короткий опис — показується на картці та під заголовком',
         },
       },
     },
     {
-      name: 'url',
+      name: 'githubLink',
       label: {
-        en: 'App URL',
-        uk: 'Посилання на застосунок',
+        en: 'Github Link',
+        uk: 'Посилання на Github',
       },
       type: 'text',
       required: true,
+    },
+    {
+      name: 'url',
+      label: {
+        en: 'Live URL',
+        uk: 'Посилання на сайт',
+      },
+      type: 'text',
+      admin: {
+        description: {
+          en: 'Only for web apps — adds a "launch" button',
+          uk: 'Тільки для веб-апок — додає кнопку "launch"',
+        },
+      },
     },
     {
       name: 'image',
@@ -115,16 +130,21 @@ export const Apps: CollectionConfig = {
       },
     },
     {
-      name: 'githubLink',
+      name: 'content',
       label: {
-        en: 'Github Link',
-        uk: 'Посилання на Github',
+        en: 'Content',
+        uk: 'Контент',
       },
-      type: 'text',
+      type: 'richText',
+      localized: true,
       admin: {
-        position: 'sidebar',
+        description: {
+          en: 'Shown on the app page: features, how to install and use',
+          uk: 'Показується на сторінці апки: можливості, як встановити й користуватись',
+        },
       },
     },
+    ...slugField(),
   ],
   hooks: {
     afterChange: [revalidateApps],
