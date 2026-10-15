@@ -13,7 +13,8 @@
     "workExperience": "Досвід роботи"
   },
   "ProjectsPage": {
-    "filters": "Фільтри"
+    "filters": "Фільтри",
+    "appsLink": "також: невеликі апки й тулзи →"
   },
   "Globals": {
     "back": "Назад",
@@ -27,5 +28,11 @@
     "projects": "Проєкти",
     "about": "Про мене",
     "contact": "Контакти"
+  },
+  "AppsPage": {
+    "titleStart": "Апки й",
+    "titleAccent": "Тулзи",
+    "empty": "Поки що тут порожньо.",
+    "backToProjects": "cd ../projects"
   }
 }

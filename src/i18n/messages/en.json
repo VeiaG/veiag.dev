@@ -13,7 +13,8 @@
     "workExperience": "Work Experience"
   },
   "ProjectsPage": {
-    "filters": "Filters"
+    "filters": "Filters",
+    "appsLink": "also: small apps & tools →"
   },
   "Globals": {
     "back": "Back",
@@ -27,5 +28,11 @@
     "projects": "Projects",
     "about": "About",
     "contact": "Contact"
+  },
+  "AppsPage": {
+    "titleStart": "Apps &",
+    "titleAccent": "Tools",
+    "empty": "Nothing here yet.",
+    "backToProjects": "cd ../projects"
   }
 }

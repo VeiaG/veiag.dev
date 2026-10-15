@@ -3,7 +3,7 @@ import { routing } from './i18n/routing'
 
 export default createMiddleware(routing)
 
-// see https://next-intl-docs.vercel.app/docs/routing/middleware
+// see https://next-intl.dev/docs/routing/middleware
 export const config = {
   matcher: [
     // Match all pathnames except for

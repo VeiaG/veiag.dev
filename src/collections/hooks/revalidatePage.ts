@@ -16,7 +16,7 @@ export const revalidatePage: CollectionAfterChangeHook<Page> = ({
       payload.logger.info(`Revalidating Page at path: ${path}`)
 
       revalidatePath(path)
-      revalidateTag('blog-sitemap')
+      revalidateTag('blog-sitemap', { expire: 0 })
     }
 
     // If the post was previously published, we need to revalidate the old path

@@ -7,6 +7,7 @@ import { AvaibleLocale } from '@/i18n/routing'
 import { getTranslations } from 'next-intl/server'
 import ProjectViewToggle from '@/components/ProjectViewToggle'
 import { Suspense } from 'react'
+import { Link } from '@/i18n/navigation'
 
 export const metadata = {
   title: 'Projects — veiag.dev',
@@ -126,6 +127,13 @@ export default async function ProjectsPage({ searchParams, params }: Props) {
           ))}
         </div>
       )}
+
+      <div className="py-8 text-[12px] font-mono text-term-dim">
+        {'// '}
+        <Link href="/apps" className="text-term-muted hover:text-term-amber transition-colors">
+          {t('appsLink')}
+        </Link>
+      </div>
     </div>
   )
 }

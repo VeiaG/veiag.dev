@@ -12,6 +12,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { ProjectTags } from './collections/ProjectTags'
 import { Projects } from './collections/Projects'
+import { Apps } from './collections/Apps'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { en } from '@payloadcms/translations/languages/en'
 import { uk } from '@payloadcms/translations/languages/uk'
@@ -23,6 +24,7 @@ import { Post } from './collections/Post'
 import { Gallery } from './blocks/Gallery'
 import { Homepage } from './collections/Globals/HomePage'
 import { Blog } from './collections/Globals/Blog'
+import { AppsPage } from './collections/Globals/AppsPage'
 import { Files } from './collections/Files'
 import { Page } from './collections/Pages'
 
@@ -45,8 +47,8 @@ export default buildConfig({
     defaultLocale: 'en',
     locales: ['en', 'uk'],
   },
-  collections: [Users, Media, ProjectTags, Projects, PostCategories, Post, Files, Page],
-  globals: [Homepage, Blog],
+  collections: [Users, Media, ProjectTags, Projects, Apps, PostCategories, Post, Files, Page],
+  globals: [Homepage, Blog, AppsPage],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,
