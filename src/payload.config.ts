@@ -12,6 +12,7 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { ProjectTags } from './collections/ProjectTags'
 import { Projects } from './collections/Projects'
+import { Apps } from './collections/Apps'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { en } from '@payloadcms/translations/languages/en'
 import { uk } from '@payloadcms/translations/languages/uk'
@@ -45,7 +46,7 @@ export default buildConfig({
     defaultLocale: 'en',
     locales: ['en', 'uk'],
   },
-  collections: [Users, Media, ProjectTags, Projects, PostCategories, Post, Files, Page],
+  collections: [Users, Media, ProjectTags, Projects, Apps, PostCategories, Post, Files, Page],
   globals: [Homepage, Blog],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [

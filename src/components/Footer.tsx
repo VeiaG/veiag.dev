@@ -14,6 +14,10 @@ export default function Footer() {
       <div className="flex items-center justify-between gap-4 max-w-[900px] mx-auto">
         <span className="text-term-dim text-[11px] font-mono">
           © {new Date().getFullYear()} veiag.dev
+          <span className="mx-2">·</span>
+          <Link href="/apps" className="hover:text-term-amber transition-colors duration-150">
+            ./apps
+          </Link>
         </span>
         <div className="flex items-center">
           {LINKS.map(({ href, Icon, label }) => (

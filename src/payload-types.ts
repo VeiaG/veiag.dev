@@ -75,6 +75,7 @@ export interface Config {
     media: Media;
     'project-tags': ProjectTag;
     projects: Project;
+    apps: App;
     'post-categories': PostCategory;
     posts: Post;
     files: File;
@@ -90,6 +91,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'project-tags': ProjectTagsSelect<false> | ProjectTagsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    apps: AppsSelect<false> | AppsSelect<true>;
     'post-categories': PostCategoriesSelect<false> | PostCategoriesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     files: FilesSelect<false> | FilesSelect<true>;
@@ -213,6 +215,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -294,6 +297,30 @@ export interface Project {
      */
     image?: (string | null) | Media;
   };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apps".
+ */
+export interface App {
+  id: string;
+  _order?: string | null;
+  title: string;
+  /**
+   * What it does and how to use it — shown on the card
+   */
+  description: string;
+  url: string;
+  image?: (string | null) | Media;
+  tags?: (string | ProjectTag)[] | null;
+  /**
+   * Shows a "made with AI" badge on the card
+   */
+  madeWithAI?: boolean | null;
+  githubLink?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -445,6 +472,10 @@ export interface PayloadLockedDocument {
         value: string | Project;
       } | null)
     | ({
+        relationTo: 'apps';
+        value: string | App;
+      } | null)
+    | ({
         relationTo: 'post-categories';
         value: string | PostCategory;
       } | null)
@@ -514,6 +545,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -578,6 +610,23 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apps_select".
+ */
+export interface AppsSelect<T extends boolean = true> {
+  _order?: T;
+  title?: T;
+  description?: T;
+  url?: T;
+  image?: T;
+  tags?: T;
+  madeWithAI?: T;
+  githubLink?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
