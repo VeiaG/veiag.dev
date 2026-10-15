@@ -38,6 +38,7 @@ const DEFAULT_ITEMS: [string, string][] = [
 const ROOT_ENTRIES = [
   { name: 'blog/',            color: 'text-term-blue',  hint: 'latest posts'     },
   { name: 'projects/',        color: 'text-term-green', hint: 'open-source work' },
+  { name: 'apps/',            color: 'text-term-green', hint: 'small apps & tools' },
   { name: 'experience.json',  color: 'text-term-amber', hint: 'work history'     },
   { name: 'skills.txt',       color: 'text-term-text',  hint: 'tech stack'       },
   { name: 'contact.txt',      color: 'text-term-text',  hint: 'get in touch'     },
@@ -45,10 +46,10 @@ const ROOT_ENTRIES = [
 
 const ROOT_TAB_CANDIDATES = [
   'ls', 'ls -la', 'ls -l',
-  'ls ./blog', 'ls ./projects', 'ls -la ./projects', 'ls ./blog --sort=date',
-  'cd blog', 'cd projects',
+  'ls ./blog', 'ls ./projects', 'ls ./apps', 'ls -la ./projects', 'ls ./blog --sort=date',
+  'cd blog', 'cd projects', 'cd apps',
   'cat experience.json', 'cat skills.txt', 'cat contact.txt',
-  'open blog', 'open projects',
+  'open blog', 'open projects', 'open apps',
   'pwd', 'whoami', 'fastfetch', 'contact', 'help', 'clear',
 ]
 
@@ -73,16 +74,19 @@ export type SkillCategory = {
   items?: string[] | null
 }
 
-type Dir = 'root' | 'blog' | 'projects'
+type ListDir = 'blog' | 'projects' | 'apps'
+type Dir = 'root' | ListDir
 
-type LsItem = { name: string; hint?: string; slug?: string }
+type LsItem = { name: string; hint?: string; slug?: string; url?: string }
+
+const toSlug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
 type HistoryEntry =
   | { type: 'text';        cmd: string; result: string; isError?: boolean }
   | { type: 'fastfetch';   cmd: string }
   | { type: 'ls-root';     cmd: string }
   | { type: 'ls-loading';  cmd: string }
-  | { type: 'ls-items';    cmd: string; items: LsItem[]; dir: 'blog' | 'projects' }
+  | { type: 'ls-items';    cmd: string; items: LsItem[]; dir: ListDir }
   | { type: 'cat-exp';     cmd: string; data: ExperienceEntry[] }
   | { type: 'cat-skills';  cmd: string; data: SkillCategory[] }
 
@@ -110,7 +114,7 @@ export default function TerminalInputBar({
   const router    = useRouter()
 
   // per-dir cache so tab completion works after first ls
-  const lsCache = useRef<Partial<Record<'blog' | 'projects', LsItem[]>>>({})
+  const lsCache = useRef<Partial<Record<ListDir, LsItem[]>>>({})
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -121,8 +125,21 @@ export default function TerminalInputBar({
     setValue('')
   }
 
-  async function fetchLs(dir: 'blog' | 'projects'): Promise<LsItem[]> {
+  async function fetchLs(dir: ListDir): Promise<LsItem[]> {
     if (lsCache.current[dir]) return lsCache.current[dir]!
+
+    if (dir === 'apps') {
+      const res  = await fetch('/api/apps?limit=0&sort=_order&depth=0')
+      const data = await res.json()
+      const items: LsItem[] = (data.docs ?? []).map(
+        (a: { id: string; title?: string; url: string; madeWithAI?: boolean | null }) => {
+          const slug = toSlug(a.title ?? '') || a.id
+          return { name: slug, hint: `${a.title ?? ''}${a.madeWithAI ? ' ✦ AI' : ''}`, slug, url: a.url }
+        },
+      )
+      lsCache.current[dir] = items
+      return items
+    }
 
     const url = dir === 'blog'
       ? '/api/posts?limit=10&sort=-publishedAt&depth=0'
@@ -160,6 +177,8 @@ export default function TerminalInputBar({
 
       if (cwd === 'blog') {
         candidates.push(...slugs.map(s => `cat ${s}.md`), ...slugs.map(s => `open ${s}`))
+      } else if (cwd === 'apps') {
+        candidates.push(...slugs.map(s => `./${s}`), ...slugs.map(s => `open ${s}`))
       } else {
         candidates.push(...slugs.map(s => `cd ${s}`), ...slugs.map(s => `open ${s}`))
       }
@@ -204,10 +223,10 @@ export default function TerminalInputBar({
       return
     }
 
-    /* cd blog | cd projects (from anywhere) */
-    const cdDir = cmd.match(/^cd\s+(blog|projects)\/?$/)
+    /* cd blog | cd projects | cd apps (from anywhere) */
+    const cdDir = cmd.match(/^cd\s+(blog|projects|apps)\/?$/)
     if (cdDir) {
-      const target = cdDir[1] as 'blog' | 'projects'
+      const target = cdDir[1] as ListDir
       setCwd(target)
       push({ type: 'text', cmd: trimmed, result: `~/${target}` })
       fetchLs(target).catch(() => {}) // warm cache for tab completion
@@ -238,12 +257,12 @@ export default function TerminalInputBar({
       return
     }
 
-    /* ls — supports ls, ls -la, ls ./blog, ls -la ./projects, ls ./blog --sort=date */
+    /* ls — supports ls, ls -la, ls ./blog, ls -la ./projects, ls ./apps, ls ./blog --sort=date */
     if (/^ls(\s|$)/.test(cmd)) {
-      const pathMatch = cmd.match(/\b(blog|projects)\b/)
+      const pathMatch = cmd.match(/\b(blog|projects|apps)\b/)
       const targetDir = pathMatch
-        ? (pathMatch[1] as 'blog' | 'projects')
-        : (cwd === 'root' ? null : (cwd as 'blog' | 'projects'))
+        ? (pathMatch[1] as ListDir)
+        : (cwd === 'root' ? null : cwd)
 
       if (!targetDir) {
         push({ type: 'ls-root', cmd: trimmed })
@@ -324,9 +343,26 @@ export default function TerminalInputBar({
       }
     }
 
-    /* open blog | open projects */
+    /* open <app> | ./<app> inside ~/apps → open the app in a new tab */
+    if (cwd === 'apps') {
+      const m = cmd.match(/^(?:open\s+|\.\/)([\w-]+)$/)
+      if (m) {
+        const items = lsCache.current['apps'] ?? []
+        const found = items.find(i => i.slug === m[1])
+        if (found?.url) {
+          push({ type: 'text', cmd: trimmed, result: `Launching ${found.slug}...` })
+          window.open(found.url, '_blank', 'noopener,noreferrer')
+        } else {
+          push({ type: 'text', cmd: trimmed, result: `${m[1]}: command not found`, isError: true })
+        }
+        return
+      }
+    }
+
+    /* open blog | open projects | open apps */
     if (cmd === 'open blog')     { router.push('/blog');     push({ type: 'text', cmd: trimmed, result: 'Opening /blog...' });     return }
     if (cmd === 'open projects') { router.push('/projects'); push({ type: 'text', cmd: trimmed, result: 'Opening /projects...' }); return }
+    if (cmd === 'open apps')     { router.push('/apps');     push({ type: 'text', cmd: trimmed, result: 'Opening /apps...' });     return }
 
     /* misc */
     let result: string
@@ -334,12 +370,13 @@ export default function TerminalInputBar({
       case 'help': {
         const lines = [
           'Navigation:  cd <dir>  cd ..  pwd',
-          'Listing:     ls  ls ./blog  ls ./projects  ls -la ./projects',
+          'Listing:     ls  ls ./blog  ls ./projects  ls ./apps  ls -la ./projects',
           'Files:       cat experience.json  cat skills.txt  cat contact.txt',
-          'Other:       open blog  open projects  fastfetch  whoami  clear',
+          'Other:       open blog  open projects  open apps  fastfetch  whoami  clear',
         ]
         if (cwd === 'blog')     lines.push('Blog dir:    cat <slug>.md  open <slug>  [click file to open]')
         if (cwd === 'projects') lines.push('Projects dir: cd <slug>  open <slug>  [click dir to open]')
+        if (cwd === 'apps')     lines.push('Apps dir:    ./<app>  open <app>  [click app to launch]')
         result = lines.join('\n')
         break
       }
@@ -435,17 +472,22 @@ export default function TerminalInputBar({
               {/* ls blog | ls projects — clickable items */}
               {h.type === 'ls-items' && (
                 <div className="flex flex-wrap gap-x-6 gap-y-0.5 mt-0.5 pl-2">
-                  {h.items.map(({ name, hint, slug }) => (
+                  {h.items.map(({ name, hint, slug, url }) => (
                     <button
                       key={name}
                       onClick={e => {
                         e.stopPropagation()
+                        if (h.dir === 'apps') {
+                          if (url) window.open(url, '_blank', 'noopener,noreferrer')
+                          return
+                        }
                         if (!slug) return
                         router.push((h.dir === 'blog' ? `/blog/${slug}` : `/projects/${slug}`) as any)
                       }}
                       className="flex items-center gap-1.5 group text-left"
                     >
                       <span className={`${
+                        h.dir === 'apps'     ? 'text-term-green font-bold' :
                         name.endsWith('/')   ? 'text-term-blue font-bold' :
                         name.endsWith('.md') ? 'text-term-green' :
                                               'text-term-text'

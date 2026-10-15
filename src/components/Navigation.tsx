@@ -20,6 +20,7 @@ const Navigation = () => {
       <ul className="hidden md:flex list-none">
         <NavLink href="/blog"    label={t('blog')} />
         <NavLink href="/projects" label={t('projects')} />
+        <NavLink href="/apps"    label={t('apps')} />
         <NavLink href="/#about"  label={t('about')} />
         <li className="border-l border-term-border">
           <ChangeLocaleButton currentLocale={locale} />
@@ -29,7 +30,7 @@ const Navigation = () => {
 
       {/* Mobile */}
       <MobileNav
-        translations={{ blog: t('blog'), projects: t('projects'), about: t('about') }}
+        translations={{ blog: t('blog'), projects: t('projects'), apps: t('apps'), about: t('about') }}
       />
     </nav>
   )

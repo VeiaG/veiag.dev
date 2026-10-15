@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation'
 import { Menu, X } from 'lucide-react'
 
 type Props = {
-  translations: { blog: string; projects: string; about: string }
+  translations: { blog: string; projects: string; apps: string; about: string }
 }
 
 const MobileNav = ({ translations }: Props) => {
@@ -25,6 +25,7 @@ const MobileNav = ({ translations }: Props) => {
         <div className="fixed inset-0 top-12 z-[99] bg-term-bg border-t border-term-border flex flex-col">
           <MobileLink href="/blog"     label={translations.blog}     prefix="./blog"     onClick={() => setOpen(false)} />
           <MobileLink href="/projects" label={translations.projects} prefix="./projects" onClick={() => setOpen(false)} />
+          <MobileLink href="/apps"     label={translations.apps}     prefix="./apps"     onClick={() => setOpen(false)} />
           <MobileLink href="/#about"   label={translations.about}    prefix="./about"    onClick={() => setOpen(false)} />
         </div>
       )}
