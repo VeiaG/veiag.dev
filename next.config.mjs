@@ -7,8 +7,12 @@ const nextConfig = {
   output: 'standalone',
   typescript:{
     ignoreBuildErrors: true,
-  }
-  // Your Next.js config here
+  },
+  // Fix for scss on windows machines (payload-enhanced-sidebar)
+  // Shouldn't affect other runtime environments
+  sassOptions: {
+    loadPaths: ['./node_modules/@payloadcms/ui/dist/scss/'],
+  },
 }
 
 export default withNextIntl(
