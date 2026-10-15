@@ -1,4 +1,4 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
+import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterChangeHook } from 'payload'
 
 import { revalidatePath } from 'next/cache'
 import { App } from '@/payload-types'
@@ -17,6 +17,13 @@ export const revalidateApps: CollectionAfterChangeHook<App> = ({ doc, previousDo
 }
 
 export const revalidateDeleteApp: CollectionAfterDeleteHook<App> = ({ doc, req: { context } }) => {
+  if (!context.disableRevalidate) {
+    revalidateAppsPage()
+  }
+  return doc
+}
+
+export const revalidateAppsPageGlobal: GlobalAfterChangeHook = ({ doc, req: { context } }) => {
   if (!context.disableRevalidate) {
     revalidateAppsPage()
   }

@@ -108,10 +108,12 @@ export interface Config {
   globals: {
     homepage: Homepage;
     blog: Blog;
+    'apps-page': AppsPage;
   };
   globalsSelect: {
     homepage: HomepageSelect<false> | HomepageSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
+    'apps-page': AppsPageSelect<false> | AppsPageSelect<true>;
   };
   locale: 'en' | 'uk';
   widgets: {
@@ -869,6 +871,33 @@ export interface Blog {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apps-page".
+ */
+export interface AppsPage {
+  id: string;
+  /**
+   * Text under the page title
+   */
+  intro?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homepage_select".
  */
 export interface HomepageSelect<T extends boolean = true> {
@@ -926,6 +955,16 @@ export interface HomepageSelect<T extends boolean = true> {
  */
 export interface BlogSelect<T extends boolean = true> {
   hero?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apps-page_select".
+ */
+export interface AppsPageSelect<T extends boolean = true> {
+  intro?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

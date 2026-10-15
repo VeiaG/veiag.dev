@@ -24,6 +24,7 @@ import { Post } from './collections/Post'
 import { Gallery } from './blocks/Gallery'
 import { Homepage } from './collections/Globals/HomePage'
 import { Blog } from './collections/Globals/Blog'
+import { AppsPage } from './collections/Globals/AppsPage'
 import { Files } from './collections/Files'
 import { Page } from './collections/Pages'
 
@@ -47,7 +48,7 @@ export default buildConfig({
     locales: ['en', 'uk'],
   },
   collections: [Users, Media, ProjectTags, Projects, Apps, PostCategories, Post, Files, Page],
-  globals: [Homepage, Blog],
+  globals: [Homepage, Blog, AppsPage],
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [
       ...defaultFeatures,

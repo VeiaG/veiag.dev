@@ -4,6 +4,7 @@ import AppCard from '@/components/AppCard'
 import { AvaibleLocale } from '@/i18n/routing'
 import { getTranslations } from 'next-intl/server'
 import { Link } from '@/i18n/navigation'
+import RichText from '@/components/RichText'
 
 export const metadata = {
   title: 'Apps — veiag.dev',
@@ -29,6 +30,8 @@ export default async function AppsPage({ params }: Props) {
     locale,
   })
 
+  const appsPage = await payload.findGlobal({ slug: 'apps-page', locale })
+
   const t = await getTranslations('AppsPage')
 
   return (
@@ -48,9 +51,9 @@ export default async function AppsPage({ params }: Props) {
         <h1 className="text-[30px] font-bold text-term-bright tracking-tight mb-2">
           {t('titleStart')} <span className="text-term-amber">{t('titleAccent')}</span>
         </h1>
-        <p className="text-term-muted text-[12px] max-w-[600px] leading-relaxed">
-          {t('description')}
-        </p>
+        {appsPage.intro && (
+          <RichText data={appsPage.intro} className="mx-0 max-w-[600px] prose-sm text-term-muted" />
+        )}
       </div>
 
       {apps.docs.length > 0 ? (

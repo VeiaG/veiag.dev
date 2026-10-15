@@ -32,7 +32,6 @@
   "AppsPage": {
     "titleStart": "Apps &",
     "titleAccent": "Tools",
-    "description": "Small apps and tools I've built (some of them mostly vibe-coded with AI). Free to use — maybe one of them will come in handy.",
     "empty": "Nothing here yet.",
     "backToProjects": "cd ../projects"
   }
